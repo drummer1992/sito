@@ -3,7 +3,7 @@
 const GenericValidator = require('./generic')
 const checks = require('../checks')
 
-class StringValidator extends GenericValidator {
+module.exports = class StringValidator extends GenericValidator {
   constructor() {
     super(checks.string())
   }
@@ -24,5 +24,3 @@ class StringValidator extends GenericValidator {
     return this.addCheck(checks.string.notEmpty())
   }
 }
-
-module.exports = StringValidator

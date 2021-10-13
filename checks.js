@@ -14,19 +14,24 @@ exports.forbidden = () => ({
   validate: predicates.isUndefined,
 })
 
-exports.notEmpty = () => ({
-  validate: value => !predicates.isEmpty(value),
-  message: key => `${key} should not be empty`,
-})
-
 exports.object = () => ({
   validate: predicates.isObject,
   message: key => `${key} should be type of object`,
 })
 
+exports.object.notEmpty = () => ({
+  validate: value => !predicates.isEmpty(value),
+  message: key => `${key} should be not empty object`,
+})
+
 exports.array = () => ({
   validate: Array.isArray,
   message: key => `${key} should be type of array`,
+})
+
+exports.array.notEmpty = () => ({
+  validate: value => !predicates.isEmpty(value),
+  message: key => `${key} should be not empty array`,
 })
 
 exports.string = () => ({

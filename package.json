@@ -4,7 +4,8 @@
   "description": "This is a simple schema validator built without dependencies",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint --fix"
   },
   "keywords": [],
   "author": "Andrii Varlamov",

@@ -1,9 +1,10 @@
 'use strict'
 
 const runChecks = require('./run-checks')
-const makeStrict = require('./make-strict')
+const makeStrictSchema = require('./make-strict-schema')
 const resolveValidator = require('./resolve-validator')
-const { ArrayValidator, SchemaValidator } = require('../schema')
+const SchemaValidator = require('../schema')
+const ArrayValidator = require('../array')
 const { BulkValidationError } = require('../../errors')
 const { toArray } = require('../../utils/array')
 
@@ -18,7 +19,7 @@ const validateObject = async (validator, payload, options) => {
   const schemaPath = options.path ? options.path + '.' : options.path
 
   if (options.strict) {
-    makeStrict(validator, payload)
+    makeStrictSchema(validator, payload)
   }
 
   for (const key of Object.keys(validator)) {

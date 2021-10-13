@@ -10,7 +10,7 @@ const assert = require('assert')
  * @property {Function} validate
  */
 
-class GenericValidator {
+module.exports = class GenericValidator {
   /**
    * @param {ValidatorCheck|ValidatorCheck[]} [checks]
    */
@@ -97,5 +97,3 @@ class GenericValidator {
     return []
   }
 }
-
-module.exports = GenericValidator

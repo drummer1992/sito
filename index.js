@@ -4,7 +4,10 @@ const checks = require('./checks')
 const GenericValidator = require('./validators/generic')
 const StringValidator = require('./validators/string')
 const NumberValidator = require('./validators/number')
-const { ObjectValidator, ArrayValidator, SchemaValidator } = require('./validators/schema')
+const SchemaValidator = require('./validators/schema')
+const ObjectValidator = require('./validators/object')
+const ArrayValidator = require('./validators/array')
+
 const { ValidationError, BulkValidationError } = require('./errors')
 
 exports.boolean = () => new GenericValidator(checks.boolean())
