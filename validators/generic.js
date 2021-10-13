@@ -77,10 +77,12 @@ module.exports = class GenericValidator {
 
   /**
    * @param {*} [payload]
+   * @param {Object} [options]
+   * @param {Boolean} [options.bulk]
    * @returns {Promise<void>}
    */
-  assert(payload) {
-    return require('../validate')(this, payload)
+  assert(payload, options = {}) {
+    return require('../validate')(this, payload, options)
   }
 
   /**
@@ -89,7 +91,7 @@ module.exports = class GenericValidator {
    */
   async validate(payload) {
     try {
-      await require('../validate')(this, payload, true)
+      await this.assert(payload, { bulk: true })
     } catch (err) {
       return err.errors
     }

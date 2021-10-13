@@ -72,10 +72,11 @@ const validate = async (key, validator, payload, options) => {
 /**
  * @param {GenericValidator|function(payload):GenericValidator} schema
  * @param {*} payload
- * @param {Boolean} [bulk]
+ * @param {Object} [options]
+ * @param {Boolean} [options.bulk]
  * @returns {Promise<void>}
  */
-module.exports = async (schema, payload, bulk = false) => {
+module.exports = async (schema, payload, { bulk = false } = {}) => {
   const errors = await validate(null, schema, payload, { path: '', bulk })
 
   if (errors.length) {
