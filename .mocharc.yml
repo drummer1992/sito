@@ -1,0 +1,5 @@
+require: './test/hooks.js'
+recursive: true
+timeout: 20000
+parallel: true
+jobs: 1
