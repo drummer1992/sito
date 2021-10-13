@@ -6,7 +6,7 @@ const resolveValidator = require('./resolve-validator')
 const SchemaValidator = require('../validators/schema')
 const ArrayValidator = require('../validators/array')
 const { BulkValidationError } = require('../errors')
-const { toArray } = require('../utils/array')
+const { toArray, compact } = require('../utils/array')
 
 const shouldValidateShape = (validator, value) => {
   const shouldValidate = () => validator.getChecks().some(c => c.force)
@@ -16,7 +16,6 @@ const shouldValidateShape = (validator, value) => {
 
 const validateObject = async (validator, payload, options) => {
   const errors = []
-  const schemaPath = options.path ? options.path + '.' : options.path
 
   if (options.strict) {
     makeStrictSchema(validator, payload)
@@ -25,7 +24,7 @@ const validateObject = async (validator, payload, options) => {
   for (const key of Object.keys(validator)) {
     const schemaErrors = await validate(key, validator, payload, {
       ...options,
-      path: `${schemaPath}${key}`,
+      path: compact([options.path, key]).join('.'),
     })
 
     errors.push(...schemaErrors)
