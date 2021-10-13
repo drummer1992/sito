@@ -19,29 +19,27 @@ const makeOptional = validate => {
   }
 }
 
+const runOneCheck = async (check, value, path) => {
+  const validate = check.force ? check.validate : makeOptional(check.validate)
+
+  if (!await validate(value)) {
+    const message = await getMessage(check.message, value, path)
+
+    return new ValidationError(message, path)
+  }
+}
+
 module.exports = async (checks, value, options) => {
   const errors = []
 
-  const runOneCheck = async check => {
-    const validate = check.force ? check.validate : makeOptional(check.validate)
-
-    if (!await validate(value)) {
-      const message = await getMessage(check.message, value, options.path)
-
-      const error = new ValidationError(message, options.path)
-
-      if (options.bulk) {
-        return error
-      }
-
-      throw error
-    }
-  }
-
   for (const check of checks) {
-    const error = await runOneCheck(check)
+    const error = await runOneCheck(check, value, options.path)
 
     if (error) {
+      if (!options.bulk) {
+        throw error
+      }
+
       errors.push(error)
     }
   }
