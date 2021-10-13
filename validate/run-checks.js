@@ -1,7 +1,7 @@
 'use strict'
 
-const { isNil } = require('../../utils/predicates')
-const { ValidationError } = require('../../errors')
+const { isNil } = require('../utils/predicates')
+const { ValidationError } = require('../errors')
 
 const DEFAULT_ROOT_ATTRIBUTE = 'payload'
 

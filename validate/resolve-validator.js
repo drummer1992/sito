@@ -1,6 +1,6 @@
 'use strict'
 
-const GenericValidator = require('../generic')
+const GenericValidator = require('../validators/generic')
 
 module.exports = (validator, payload, object) => {
   if (validator instanceof GenericValidator) {

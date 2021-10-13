@@ -3,10 +3,10 @@
 const runChecks = require('./run-checks')
 const makeStrictSchema = require('./make-strict-schema')
 const resolveValidator = require('./resolve-validator')
-const SchemaValidator = require('../schema')
-const ArrayValidator = require('../array')
-const { BulkValidationError } = require('../../errors')
-const { toArray } = require('../../utils/array')
+const SchemaValidator = require('../validators/schema')
+const ArrayValidator = require('../validators/array')
+const { BulkValidationError } = require('../errors')
+const { toArray } = require('../utils/array')
 
 const shouldValidateShape = (validator, value) => {
   const shouldValidate = () => validator.getChecks().some(c => c.force)

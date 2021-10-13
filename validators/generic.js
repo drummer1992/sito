@@ -80,7 +80,7 @@ module.exports = class GenericValidator {
    * @returns {Promise<void>}
    */
   assert(payload) {
-    return require('./validate')(this, payload)
+    return require('../validate')(this, payload)
   }
 
   /**
@@ -89,7 +89,7 @@ module.exports = class GenericValidator {
    */
   async validate(payload) {
     try {
-      await require('./validate')(this, payload, true)
+      await require('../validate')(this, payload, true)
     } catch (err) {
       return err.errors
     }
