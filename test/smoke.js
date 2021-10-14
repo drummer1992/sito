@@ -69,7 +69,7 @@ describe('mk-validator', () => {
           const validItem = { foo: { bar: { baz: { n: [5] } } } }
 
           await assert.rejects(schema.assert({}), /payload should be type of array/)
-          // await assert.rejects(schema.assert([{}]), /foo is required/)
+          await assert.rejects(schema.assert([{}]), /foo is required/)
           await assert.rejects(schema.assert([{ foo: {} }]), /\[0]\.foo.bar is required/)
           await assert.rejects(schema.assert([{ foo: { bar: {} } }]), /\[0]\.foo\.bar\.baz is required/)
           await assert.rejects(schema.assert([{ foo: { bar: { baz: {} } } }]), /\[0]\.foo\.bar\.baz\.n is required/)
