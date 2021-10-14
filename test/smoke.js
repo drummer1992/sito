@@ -14,7 +14,7 @@ describe('mk-validator', () => {
       })
 
       it('not empty', () => {
-        return assert.rejects(object().notEmpty().assert({}), /payload should not be empty/)
+        return assert.rejects(object().notEmpty().assert({}), /payload should be not empty object/)
       })
 
       describe('nested validation', () => {
@@ -49,7 +49,7 @@ describe('mk-validator', () => {
       })
 
       it('not empty', () => {
-        return assert.rejects(array().notEmpty().assert([]), /payload should not be empty/)
+        return assert.rejects(array().notEmpty().assert([]), /payload should be not empty array/)
       })
 
       describe('nested validation', () => {
@@ -83,6 +83,11 @@ describe('mk-validator', () => {
 
           await assert.rejects(schema.assert([validItem, { foo: {} }]), /\[1]\.foo.bar is required/)
           await assert.rejects(schema.assert([validItem, { foo: { bar: {} } }]), /\[1]\.foo\.bar\.baz is required/)
+
+          await assert.rejects(
+              schema.assert([validItem, { ...validItem, name: 'foo' }], { strict: true }),
+              /\[1]\.name is forbidden value/,
+          )
 
           await assert.rejects(
               schema.assert([validItem, { foo: { bar: { baz: {} } } }]),

@@ -41,7 +41,7 @@ const validateArray = async (validator, payload, options) => {
   for (let i = 0; i < iterations; i++) {
     const schemaErrors = await validate(null, validator, data[i], {
       ...options,
-      path: `${options.path}[${i}]`,
+      path: compact([options.path, `[${i}]`]).join(''),
     })
 
     errors.push(...schemaErrors)
@@ -70,14 +70,22 @@ const validate = async (key, validator, payload, options) => {
 }
 
 /**
+ * @typedef {Object} ValidationOptions
+ * @property {Boolean} [bulk]
+ * @property {Boolean} [strict]
+ */
+
+/**
  * @param {GenericValidator|function(payload):GenericValidator} schema
  * @param {*} payload
- * @param {Object} [options]
- * @param {Boolean} [options.bulk]
+ * @param {ValidationOptions} [options]
  * @returns {Promise<void>}
  */
-module.exports = async (schema, payload, { bulk = false } = {}) => {
-  const errors = await validate(null, schema, payload, { path: '', bulk })
+module.exports = async (schema, payload, options = {}) => {
+  const errors = await validate(null, schema, payload, {
+    bulk: options.bulk,
+    strict: options.strict,
+  })
 
   if (errors.length) {
     throw new BulkValidationError(errors)

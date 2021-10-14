@@ -6,13 +6,27 @@ class ValidationError extends Error {
 
     this.target = target
   }
+
+  toJSON() {
+    return {
+      message: this.message,
+      target: this.target,
+    }
+  }
 }
 
-class BulkValidationError extends Error {
+class BulkValidationError extends ValidationError {
   constructor(errors) {
     super('Bulk Validation Failed')
 
     this.errors = errors
+  }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      errors: this.errors,
+    }
   }
 }
 
