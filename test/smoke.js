@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, required, number, map, string } = require('../index')
+const { object, array, required, number, string } = require('../index')
 
 describe('mk-validator', () => {
   describe('shape validation', () => {
@@ -39,7 +39,7 @@ describe('mk-validator', () => {
       })
 
       describe('map', () => {
-        const schema = map(
+        const schema = object(
             object({
               name: string().required(),
               age: number().required(),

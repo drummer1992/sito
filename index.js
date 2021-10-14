@@ -17,26 +17,28 @@ exports.oneOf = values => new GenericValidator().addCheck(checks.oneOf(values))
 exports.string = () => new StringValidator()
 exports.number = () => new NumberValidator()
 
-exports.object = shape => {
+const fillSchemaValidator = (value, validator) => {
+  if (value instanceof GenericValidator) {
+    validator.of(value)
+  } else if (value) {
+    validator.shape(value)
+  }
+}
+
+exports.object = value => {
   const validator = new ObjectValidator()
 
-  if (shape) {
-    validator.shape(shape)
-  }
+  fillSchemaValidator(value, validator)
 
   return validator
 }
 
-exports.map = itemValidator => exports.object().of(itemValidator)
+exports.array = value => {
+  const validator = new ArrayValidator()
 
-exports.array = itemValidator => {
-  const arrayValidator = new ArrayValidator()
+  fillSchemaValidator(value, validator)
 
-  if (itemValidator) {
-    arrayValidator.of(itemValidator)
-  }
-
-  return arrayValidator
+  return validator
 }
 
 exports.ValidationError = ValidationError
