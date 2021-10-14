@@ -1,8 +1,8 @@
 'use strict'
 
 const { required } = require('../checks')
-const { last, toArray, compact } = require('../utils/array')
-const assert = require('assert')
+const { last } = require('../utils/array')
+const { assert } = require('../errors')
 
 /**
  * @typedef {Object} ValidatorCheck
@@ -11,11 +11,8 @@ const assert = require('assert')
  */
 
 module.exports = class GenericValidator {
-  /**
-   * @param {ValidatorCheck|ValidatorCheck[]} [checks]
-   */
-  constructor(checks) {
-    const _checks = compact(toArray(checks))
+  constructor() {
+    const _checks = []
 
     Object.defineProperties(this, {
       _getChecks: {

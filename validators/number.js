@@ -5,7 +5,9 @@ const checks = require('../checks')
 
 module.exports = class NumberValidator extends GenericValidator {
   constructor() {
-    super(checks.number())
+    super()
+
+    this.addCheck(checks.number())
   }
 
   min(n) {

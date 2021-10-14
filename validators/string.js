@@ -5,7 +5,9 @@ const checks = require('../checks')
 
 module.exports = class StringValidator extends GenericValidator {
   constructor() {
-    super(checks.string())
+    super()
+
+    this.addCheck(checks.string())
   }
 
   maxLength(n) {

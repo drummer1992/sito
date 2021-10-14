@@ -30,4 +30,14 @@ class BulkValidationError extends ValidationError {
   }
 }
 
-module.exports = { ValidationError, BulkValidationError }
+const assert = (condition, message) => {
+  if (!condition) {
+    throw new Error(message)
+  }
+}
+
+module.exports = {
+  ValidationError,
+  BulkValidationError,
+  assert,
+}

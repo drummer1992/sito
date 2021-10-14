@@ -10,14 +10,32 @@ const ArrayValidator = require('./validators/array')
 
 const { ValidationError, BulkValidationError } = require('./errors')
 
-exports.boolean = () => new GenericValidator(checks.boolean())
-exports.required = () => new GenericValidator(checks.required())
-exports.forbidden = () => new GenericValidator(checks.forbidden())
-exports.oneOf = values => new GenericValidator(checks.oneOf(values))
-exports.object = shape => new ObjectValidator().shape(shape)
-exports.array = validator => new ArrayValidator().of(validator)
+exports.boolean = () => new GenericValidator().addCheck(checks.boolean())
+exports.required = () => new GenericValidator().addCheck(checks.required())
+exports.forbidden = () => new GenericValidator().addCheck(checks.forbidden())
+exports.oneOf = values => new GenericValidator().addCheck(checks.oneOf(values))
 exports.string = () => new StringValidator()
 exports.number = () => new NumberValidator()
+
+exports.object = shape => {
+  const validator = new ObjectValidator()
+
+  if (shape) {
+    validator.shape(shape)
+  }
+
+  return validator
+}
+
+exports.array = itemValidator => {
+  const arrayValidator = new ArrayValidator()
+
+  if (itemValidator) {
+    arrayValidator.of(itemValidator)
+  }
+
+  return arrayValidator
+}
 
 exports.Error = {
   ValidationError,
