@@ -39,15 +39,10 @@ exports.array = itemValidator => {
   return arrayValidator
 }
 
-exports.Error = {
-  ValidationError,
-  BulkValidationError,
-}
-
-exports.Validator = {
-  GenericValidator,
-  StringValidator,
-  SchemaValidator,
-  ObjectValidator,
-  ArrayValidator,
-}
+exports.ValidationError = ValidationError
+exports.BulkValidationError = BulkValidationError
+exports.GenericValidator = GenericValidator
+exports.StringValidator = StringValidator
+exports.SchemaValidator = SchemaValidator
+exports.ObjectValidator = ObjectValidator
+exports.ArrayValidator = ArrayValidator
