@@ -18,11 +18,11 @@ const validateObject = async (validator, payload, options) => {
   const errors = []
 
   if (options.strict) {
-    makeStrictSchema(validator, payload)
+    makeStrictSchema(validator._shape, payload)
   }
 
-  for (const key of Object.keys(validator)) {
-    const schemaErrors = await validate(key, validator, payload, {
+  for (const key of Object.keys(validator._shape)) {
+    const schemaErrors = await validate(key, validator._shape[key], payload, {
       ...options,
       path: compact([options.path, key]).join('.'),
     })
@@ -39,7 +39,7 @@ const validateArray = async (validator, payload, options) => {
   const iterations = Math.max(data.length, 1)
 
   for (let i = 0; i < iterations; i++) {
-    const schemaErrors = await validate(null, validator, data[i], {
+    const schemaErrors = await validate(null, validator._of, data[i], {
       ...options,
       path: compact([options.path, `[${i}]`]).join(''),
     })
@@ -52,16 +52,15 @@ const validateArray = async (validator, payload, options) => {
 
 const validate = async (key, validator, payload, options) => {
   const value = key ? payload?.[key] : payload
-  const currentValidator = key ? validator[key] : validator
 
-  const resolvedValidator = resolveValidator(currentValidator, value, payload)
+  const resolvedValidator = resolveValidator(validator, value, payload)
 
   const errors = await runChecks(resolvedValidator.getChecks(), value, options)
 
   if (shouldValidateShape(resolvedValidator, value)) {
-    const schemaValidator = resolvedValidator instanceof ArrayValidator ? validateArray : validateObject
+    const validateSchema = resolvedValidator instanceof ArrayValidator ? validateArray : validateObject
 
-    const shapeErrors = await schemaValidator(resolvedValidator.getShapeValidator(), value, options)
+    const shapeErrors = await validateSchema(resolvedValidator, value, options)
 
     return errors.concat(shapeErrors)
   }

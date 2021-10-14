@@ -6,17 +6,19 @@ const GenericValidator = require('./generic')
 const { array } = require('../checks')
 
 module.exports = class ArrayValidator extends SchemaValidator {
-  constructor(itemsValidator = new GenericValidator()) {
+  constructor() {
     super(array())
 
-    this.itemsValidator = itemsValidator
-  }
-
-  getShapeValidator() {
-    return this.itemsValidator
+    this._of = new GenericValidator()
   }
 
   notEmpty() {
     return this.addCheck(array.notEmpty())
+  }
+
+  of(validator) {
+    this._of = validator
+
+    return this
   }
 }

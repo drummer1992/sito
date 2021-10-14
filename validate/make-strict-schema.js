@@ -4,12 +4,12 @@ const { forbidden } = require('../checks')
 const { isObject } = require('../utils/predicates')
 const GenericValidator = require('../validators/generic')
 
-module.exports = (objectValidator, data) => {
+module.exports = (shape, data) => {
   const keys = isObject(data) ? Object.keys(data) : []
 
   for (const key of keys) {
-    if (!objectValidator[key]) {
-      objectValidator[key] = new GenericValidator(forbidden())
+    if (!shape[key]) {
+      shape[key] = new GenericValidator(forbidden())
     }
   }
 }

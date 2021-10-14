@@ -5,17 +5,19 @@ const SchemaValidator = require('./schema')
 const { object } = require('../checks')
 
 module.exports = class ObjectValidator extends SchemaValidator {
-  constructor(shape) {
+  constructor() {
     super(object())
 
-    Object.assign(this, shape)
-  }
-
-  getShapeValidator() {
-    return this
+    this._shape = {}
   }
 
   notEmpty() {
     return this.addCheck(object.notEmpty())
+  }
+
+  shape(shape) {
+    this._shape = shape
+
+    return this
   }
 }
