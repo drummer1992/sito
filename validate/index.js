@@ -52,7 +52,7 @@ const validateArray = async (validator, payload, options) => {
 }
 
 const validate = async (key, payload, validator, options) => {
-  const value = isNil(key) ? payload : payload?.[key]
+  const value = isNil(key) ? payload : (payload && payload[key])
 
   const resolvedValidator = resolveValidator(validator, value, payload)
 
