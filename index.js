@@ -27,6 +27,8 @@ exports.object = shape => {
   return validator
 }
 
+exports.map = itemValidator => exports.object().of(itemValidator)
+
 exports.array = itemValidator => {
   const arrayValidator = new ArrayValidator()
 

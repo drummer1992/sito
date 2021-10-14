@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, required } = require('../index')
+const { object, array, required, number, map, string } = require('../index')
 
 describe('mk-validator', () => {
   describe('shape validation', () => {
@@ -37,6 +37,35 @@ describe('mk-validator', () => {
           await schema.assert({ foo: { bar: { baz: { n: 5 } } } })
         })
       })
+
+      describe('map', () => {
+        const schema = map(
+            object({
+              name: string().required(),
+              age: number().required(),
+            })
+                .notEmpty()
+                .required(),
+        )
+            .required()
+            .notEmpty()
+
+        it('smoke', async () => {
+          await assert.rejects(schema.assert({ id1: '' }), /id1 should be type of object/)
+          await assert.rejects(schema.assert({ id1: { foo: '' } }), /id1\.name is required/)
+          await assert.rejects(schema.assert({ id1: { name: 'Andrii' } }), /id1\.age is required/)
+
+          await assert.rejects(schema.assert({
+            id1: { name: 'Andrii', age: 28 },
+            id2: { name: 'Max', age: {} },
+          }), /id2\.age should be a number/)
+
+          await schema.assert({
+            id1: { name: 'Andrii', age: 28 },
+            id2: { name: 'Max', age: 29 },
+          })
+        })
+      })
     })
 
     describe('array validation', () => {
@@ -57,7 +86,7 @@ describe('mk-validator', () => {
           foo: object({
             bar: object({
               baz: object({
-                n: array(required()).required(),
+                n: array(number().required()).notEmpty().required(),
               }).required(),
             }).required(),
           }).required(),
@@ -76,7 +105,12 @@ describe('mk-validator', () => {
 
           await assert.rejects(
               schema.assert([{ foo: { bar: { baz: { n: [] } } } }]),
-              /\[0]\.foo\.bar\.baz\.n\[0] is required/,
+              /\[0]\.foo\.bar\.baz\.n should be not empty array/,
+          )
+
+          await assert.rejects(
+              schema.assert([{ foo: { bar: { baz: { n: [{}] } } } }]),
+              /\[0]\.foo\.bar\.baz\.n\[0] should be a number/,
           )
 
           await schema.assert([validItem])
@@ -96,7 +130,12 @@ describe('mk-validator', () => {
 
           await assert.rejects(
               schema.assert([validItem, { foo: { bar: { baz: { n: [] } } } }]),
-              /\[1]\.foo\.bar\.baz\.n\[0] is required/,
+              /\[1]\.foo\.bar\.baz\.n should be not empty array/,
+          )
+
+          await assert.rejects(
+              schema.assert([validItem, { foo: { bar: { baz: { n: [{}] } } } }]),
+              /\[1]\.foo\.bar\.baz\.n\[0] should be a number/,
           )
 
           await schema.assert([validItem, validItem])

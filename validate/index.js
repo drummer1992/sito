@@ -1,54 +1,51 @@
 'use strict'
 
 const runChecks = require('./run-checks')
-const makeStrictSchema = require('./make-strict-schema')
+const enrichSchemaWithItemValidator = require('./enrich-schema-with-item-validator')
+const enrichSchemaWithForbiddenValidator = require('./enrich-schema-with-forbidden-validator')
 const resolveValidator = require('./resolve-validator')
 const SchemaValidator = require('../validators/schema')
 const ArrayValidator = require('../validators/array')
 const { BulkValidationError } = require('../errors')
-const { toArray, compact } = require('../utils/array')
+const { compact } = require('../utils/array')
 const { isNil } = require('../utils/predicates')
+
+const composeItemPath = (path, attribute, isArray) => {
+  const key = isArray ? `[${attribute}]` : attribute
+  const separator = isArray ? '' : '.'
+
+  return compact([path, key]).join(separator)
+}
+
+const enrichSchemaWithValidatorsIfNeeded = (validator, payload, options) => {
+  if (options.strict) enrichSchemaWithForbiddenValidator(validator._shape, payload)
+  if (validator._of) enrichSchemaWithItemValidator(validator._shape, validator._of, payload)
+}
+
+const validateSchema = async (validator, payload, options) => {
+  const errors = []
+  const isArrayValidator = validator instanceof ArrayValidator
+
+  enrichSchemaWithValidatorsIfNeeded(validator, payload, options)
+
+  for (const key of Object.keys(validator._shape)) {
+    const itemValidator = validator._shape[key]
+
+    const schemaErrors = await validate(key, payload, itemValidator, {
+      ...options,
+      path: composeItemPath(options.path, key, isArrayValidator),
+    })
+
+    errors.push(...schemaErrors)
+  }
+
+  return errors
+}
 
 const shouldValidateShape = (validator, value) => {
   const shouldValidate = () => validator.getChecks().some(c => c.force)
 
   return validator instanceof SchemaValidator && (shouldValidate() || value)
-}
-
-const validateObject = async (validator, payload, options) => {
-  const errors = []
-
-  if (options.strict) {
-    makeStrictSchema(validator._shape, payload)
-  }
-
-  for (const key of Object.keys(validator._shape)) {
-    const schemaErrors = await validate(key, payload, validator._shape[key], {
-      ...options,
-      path: compact([options.path, key]).join('.'),
-    })
-
-    errors.push(...schemaErrors)
-  }
-
-  return errors
-}
-
-const validateArray = async (validator, payload, options) => {
-  const errors = []
-  const data = toArray(payload)
-  const iterations = Math.max(data.length, 1)
-
-  for (let i = 0; i < iterations; i++) {
-    const schemaErrors = await validate(i, data, validator._of, {
-      ...options,
-      path: compact([options.path, `[${i}]`]).join(''),
-    })
-
-    errors.push(...schemaErrors)
-  }
-
-  return errors
 }
 
 const validate = async (key, payload, validator, options) => {
@@ -59,8 +56,6 @@ const validate = async (key, payload, validator, options) => {
   const errors = await runChecks(resolvedValidator.getChecks(), value, options)
 
   if (shouldValidateShape(resolvedValidator, value)) {
-    const validateSchema = resolvedValidator instanceof ArrayValidator ? validateArray : validateObject
-
     const shapeErrors = await validateSchema(resolvedValidator, value, options)
 
     return errors.concat(shapeErrors)
