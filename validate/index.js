@@ -7,6 +7,7 @@ const SchemaValidator = require('../validators/schema')
 const ArrayValidator = require('../validators/array')
 const { BulkValidationError } = require('../errors')
 const { toArray, compact } = require('../utils/array')
+const { isNil } = require('../utils/predicates')
 
 const shouldValidateShape = (validator, value) => {
   const shouldValidate = () => validator.getChecks().some(c => c.force)
@@ -22,7 +23,7 @@ const validateObject = async (validator, payload, options) => {
   }
 
   for (const key of Object.keys(validator._shape)) {
-    const schemaErrors = await validate(key, validator._shape[key], payload, {
+    const schemaErrors = await validate(key, payload, validator._shape[key], {
       ...options,
       path: compact([options.path, key]).join('.'),
     })
@@ -39,7 +40,7 @@ const validateArray = async (validator, payload, options) => {
   const iterations = Math.max(data.length, 1)
 
   for (let i = 0; i < iterations; i++) {
-    const schemaErrors = await validate(null, validator._of, data[i], {
+    const schemaErrors = await validate(i, data, validator._of, {
       ...options,
       path: compact([options.path, `[${i}]`]).join(''),
     })
@@ -50,8 +51,8 @@ const validateArray = async (validator, payload, options) => {
   return errors
 }
 
-const validate = async (key, validator, payload, options) => {
-  const value = key ? payload?.[key] : payload
+const validate = async (key, payload, validator, options) => {
+  const value = isNil(key) ? payload : payload?.[key]
 
   const resolvedValidator = resolveValidator(validator, value, payload)
 
@@ -81,7 +82,7 @@ const validate = async (key, validator, payload, options) => {
  * @returns {Promise<void>}
  */
 module.exports = async (schema, payload, options = {}) => {
-  const errors = await validate(null, schema, payload, {
+  const errors = await validate(null, payload, schema, {
     bulk: options.bulk,
     strict: options.strict,
   })
