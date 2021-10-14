@@ -17,29 +17,8 @@ exports.oneOf = values => new GenericValidator().addCheck(checks.oneOf(values))
 exports.string = () => new StringValidator()
 exports.number = () => new NumberValidator()
 
-const fillSchemaValidator = (value, validator) => {
-  if (value instanceof GenericValidator) {
-    validator.of(value)
-  } else if (value) {
-    validator.shape(value)
-  }
-}
-
-exports.object = value => {
-  const validator = new ObjectValidator()
-
-  fillSchemaValidator(value, validator)
-
-  return validator
-}
-
-exports.array = value => {
-  const validator = new ArrayValidator()
-
-  fillSchemaValidator(value, validator)
-
-  return validator
-}
+exports.object = value => ObjectValidator.create(value)
+exports.array = value => ArrayValidator.create(value)
 
 exports.ValidationError = ValidationError
 exports.BulkValidationError = BulkValidationError
