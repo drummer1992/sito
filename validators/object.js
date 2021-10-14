@@ -8,8 +8,6 @@ module.exports = class ObjectValidator extends SchemaValidator {
     super()
 
     this.addCheck(object())
-
-    this._shape = {}
   }
 
   notEmpty() {
@@ -17,6 +15,6 @@ module.exports = class ObjectValidator extends SchemaValidator {
   }
 
   getShape() {
-    return { ...this._shape }
+    return { ...(this._shape || {}) }
   }
 }

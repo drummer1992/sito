@@ -8,8 +8,6 @@ module.exports = class ArrayValidator extends SchemaValidator {
     super()
 
     this.addCheck(array())
-
-    this._shape = []
   }
 
   notEmpty() {
@@ -17,6 +15,6 @@ module.exports = class ArrayValidator extends SchemaValidator {
   }
 
   getShape() {
-    return [...this._shape]
+    return [...this._shape || []]
   }
 }
