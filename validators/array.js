@@ -15,4 +15,8 @@ module.exports = class ArrayValidator extends SchemaValidator {
   notEmpty() {
     return this.addCheck(array.notEmpty())
   }
+
+  getShape() {
+    return [...this._shape]
+  }
 }

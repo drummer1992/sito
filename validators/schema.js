@@ -52,4 +52,12 @@ module.exports = class SchemaValidator extends GenericValidator {
 
     return this
   }
+
+  getShape() {
+    throw new Error('abstract method call')
+  }
+
+  getItemValidator() {
+    return this._of
+  }
 }

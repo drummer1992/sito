@@ -15,4 +15,8 @@ module.exports = class ObjectValidator extends SchemaValidator {
   notEmpty() {
     return this.addCheck(object.notEmpty())
   }
+
+  getShape() {
+    return { ...this._shape }
+  }
 }

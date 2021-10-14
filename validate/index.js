@@ -17,23 +17,27 @@ const composeItemPath = (path, attribute, isArray) => {
   return compact([path, key]).join(separator)
 }
 
-const enrichSchemaWithValidatorsIfNeeded = (validator, payload, options) => {
-  if (options.strict) enrichSchemaWithForbiddenValidator(validator._shape, payload)
-  if (validator._of) enrichSchemaWithItemValidator(validator._shape, validator._of, payload)
+const enrichSchemaWithValidatorsIfNeeded = (shape, validator, payload, strict) => {
+  if (strict) {
+    enrichSchemaWithForbiddenValidator(shape, payload)
+  }
+
+  if (validator.getItemValidator()) {
+    enrichSchemaWithItemValidator(shape, validator.getItemValidator(), payload)
+  }
 }
 
 const validateSchema = async (validator, payload, options) => {
   const errors = []
-  const isArrayValidator = validator instanceof ArrayValidator
 
-  enrichSchemaWithValidatorsIfNeeded(validator, payload, options)
+  const shape = validator.getShape()
 
-  for (const key of Object.keys(validator._shape)) {
-    const itemValidator = validator._shape[key]
+  enrichSchemaWithValidatorsIfNeeded(shape, validator, payload, options.strict)
 
-    const schemaErrors = await validate(key, payload, itemValidator, {
+  for (const key of Object.keys(shape)) {
+    const schemaErrors = await validate(key, payload, shape[key], {
       ...options,
-      path: composeItemPath(options.path, key, isArrayValidator),
+      path: composeItemPath(options.path, key, validator instanceof ArrayValidator),
     })
 
     errors.push(...schemaErrors)
