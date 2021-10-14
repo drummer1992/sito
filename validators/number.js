@@ -22,11 +22,7 @@ module.exports = class NumberValidator extends GenericValidator {
     return this.min(0)
   }
 
-  checkType(value = true) {
-    if (value) {
-      this.addCheck(checks.number.checkType())
-    }
-
-    return this
+  checkType() {
+    return this.addCheck(checks.number.checkType())
   }
 }

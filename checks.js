@@ -2,10 +2,10 @@
 
 const predicates = require('./utils/predicates')
 
-exports.required = () => ({
+exports.required = message => ({
   force: true,
   validate: value => !predicates.isNil(value),
-  message: key => `${key} is required`,
+  message: message || (key => `${key} is required`),
 })
 
 exports.forbidden = () => ({

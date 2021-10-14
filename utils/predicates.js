@@ -6,6 +6,7 @@ exports.isPrimitive = value => value !== Object(value)
 exports.isObject = obj => (obj === Object(obj)) && !Array.isArray(obj)
 exports.isNumber = value => value !== null && !isNaN(value)
 exports.isString = value => typeof value === 'string'
+exports.isFunction = value => typeof value === 'function'
 
 exports.isEmpty = value => {
   const array = []

@@ -2,12 +2,13 @@
 
 const { required } = require('../checks')
 const { last } = require('../utils/array')
+const { isObject, isString, isFunction } = require('../utils/predicates')
 const { assert } = require('../errors')
 
 /**
  * @typedef {Object} ValidatorCheck
- * @property {Function|String} message
- * @property {Function} validate
+ * @property {function(path, key): String|String} message
+ * @property {function(value): Boolean} validate
  */
 
 module.exports = class GenericValidator {
@@ -46,22 +47,27 @@ module.exports = class GenericValidator {
    */
   addCheck(check) {
     assert(check, 'check is required')
+    assert(isObject(check), 'check should be type of object')
+    assert(check.message, 'check.message is required')
+    assert(check.validate, 'check.validate is required')
+    assert(isString(check.message) || isFunction(check.message), 'check.message should be a string or a function')
+    assert(isFunction(check.validate), 'check.validate should be a function')
 
     this._addCheck(check)
 
     return this
   }
 
-  required(value = true) {
+  required(value = true, message) {
     if (value) {
-      this.addCheck(required())
+      this.addCheck(required(message))
     }
 
     return this
   }
 
   message(message) {
-    assert(message, 'message is required')
+    assert(isString(message) || isFunction(message), 'message should be a string or a function')
 
     const validator = last(this.getChecks())
 
