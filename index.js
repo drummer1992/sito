@@ -11,7 +11,7 @@ const ArrayValidator = require('./validators/array')
 const { ValidationError, BulkValidationError } = require('./errors')
 
 exports.boolean = () => new GenericValidator().addCheck(checks.boolean())
-exports.required = () => new GenericValidator().addCheck(checks.required())
+exports.required = message => new GenericValidator().addCheck(checks.required(message))
 exports.forbidden = () => new GenericValidator().addCheck(checks.forbidden())
 exports.oneOf = values => new GenericValidator().addCheck(checks.oneOf(values))
 exports.string = () => new StringValidator()
