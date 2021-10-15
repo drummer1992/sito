@@ -81,6 +81,12 @@ describe('mk-validator', () => {
         return assert.rejects(array().notEmpty().assert([]), /payload should be not empty array/)
       })
 
+      it('shape', () => {
+        return assert.rejects(array([
+          string().required(),
+        ]).required().assert([]), /\[0] is required/)
+      })
+
       describe('nested validation', () => {
         const schema = array(object({
           foo: object({

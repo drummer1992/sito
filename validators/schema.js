@@ -7,7 +7,7 @@ const { isObject, isEmpty, isFunction } = require('../utils/predicates')
 const mightBeValidator = value => value instanceof GenericValidator || isFunction(value)
 
 const ensureShapeIsValid = shape => {
-  assert(isObject(shape), 'shape should be type of object')
+  assert(isObject(shape) || Array.isArray(shape), 'not valid shape provided')
 
   for (const key of Object.keys(shape)) {
     assert(mightBeValidator(shape[key]), `bad validator '${key}' provided`)
