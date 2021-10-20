@@ -41,10 +41,6 @@ module.exports = class GenericValidator {
     return this
   }
 
-  /**
-   * @param {ValidatorCheck} check
-   * @returns {this}
-   */
   addCheck(check) {
     assert(check, 'check is required')
     assert(isObject(check), 'check should be type of object')

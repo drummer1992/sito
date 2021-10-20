@@ -22,7 +22,9 @@ describe('mk-validator', () => {
           foo: object({
             bar: object({
               baz: object({
-                n: required(),
+                n: number()
+                    .required(false)
+                    .message('custom message that will not show'),
               }).required(),
             }).required(),
           }).required(),
@@ -32,7 +34,11 @@ describe('mk-validator', () => {
           await assert.rejects(schema.assert({}), /foo is required/)
           await assert.rejects(schema.assert({ foo: {} }), /foo\.bar is required/)
           await assert.rejects(schema.assert({ foo: { bar: {} } }), /foo\.bar\.baz is required/)
-          await assert.rejects(schema.assert({ foo: { bar: { baz: {} } } }), /foo\.bar\.baz\.n is required/)
+
+          await assert.rejects(
+              schema.assert({ foo: { bar: { baz: { n: 'asd' } } } }),
+              /foo\.bar\.baz\.n should be a number/,
+          )
 
           await schema.assert({ foo: { bar: { baz: { n: 5 } } } })
         })
