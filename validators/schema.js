@@ -44,7 +44,7 @@ module.exports = class SchemaValidator extends GenericValidator {
   }
 
   of(itemValidator) {
-    assert(isEmpty(this._shape), 'unable to use item validator if shape is already defined')
+    assert(isEmpty(this.getShape()), 'unable to use item validator if shape is already defined')
     assert(mightBeValidator(itemValidator), 'bad validator provided')
 
     this._of = itemValidator
@@ -53,7 +53,7 @@ module.exports = class SchemaValidator extends GenericValidator {
   }
 
   shape(shape) {
-    assert(!this._of, 'unable to use shape validation if item validator is already defined')
+    assert(!this.getItemValidator(), 'unable to use shape validation if item validator is already defined')
 
     ensureShapeIsValid(shape)
 
