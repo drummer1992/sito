@@ -58,22 +58,18 @@ module.exports = class GenericValidator {
     return this
   }
 
-  required(value = true, message) {
-    if (value) {
-      this.addCheck(required(message))
-    }
-
-    return this
+  required(value) {
+    return this.addCheck(required(value))
   }
 
   message(message) {
     assert(isString(message) || isFunction(message), 'message should be a string or a function')
 
-    const validator = last(this.getChecks())
+    const check = last(this.getChecks())
 
-    if (validator) {
-      validator.message = message
-    }
+    assert(check, 'no one check defined')
+
+    check.message = message
 
     return this
   }
