@@ -11,10 +11,10 @@ const ArrayValidator = require('./lib/validators/array')
 const { ValidationError, BulkValidationError } = require('./lib/errors')
 
 exports.required = (value = true) => new GenericValidator()
-    .addCheck(checks.required(), { force: value })
+    .addCheck(checks.required(), { optional: !value })
 
 exports.forbidden = (value = true) => new GenericValidator()
-    .addCheck(checks.forbidden(), { force: value })
+    .addCheck(checks.forbidden(), { optional: !value })
 
 exports.boolean = () => new GenericValidator().addCheck(checks.boolean())
 exports.oneOf = values => new GenericValidator().addCheck(checks.oneOf(values))
