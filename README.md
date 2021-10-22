@@ -87,6 +87,7 @@ const {
   - [GenericValidator](#generic)
     - [`validator.assert(payload: any, { bulk: boolean, strict: boolean }): Promise<void>`](#validatorassertpayload-any--bulk-boolean-strict-boolean--promisevoid)
     - [`validator.validate(payload: any, { strict: boolean }): Promise<ValidationError[]>`](#validatorvalidatepayload-any--strict-boolean--promisevalidationerror)
+    - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorvalidatepayload-any--strict-boolean--promisevalidationerror)
     - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
     - [`validator.message(message?: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
     - [`validator.addCheck({ message: string | function, validate: function }): GenericValidator`](#validatoraddcheck-message-string--function-validate-function--genericvalidator)
@@ -176,6 +177,16 @@ const schema = object({ foo: string().required() })
 await schema.validate({ foo: 'bar', baz: 42 }, { bulk: true, strict })
  
 // returns => [{ message: 'baz is forbidden attribute', path: 'baz', value: 42 }] 
+```
+
+### `validator.isValid(payload: any): Promise<Boolean>`
+
+IsValid method performs validation and returns `true` in case succeeded validation, otherwise `false`
+
+```js
+const { string } = require('tak')
+
+await array([number()]).isValid(['ops']) // false 
 ```
 
 #### `validator.required(isRequired?: boolean): GenericValidator`
