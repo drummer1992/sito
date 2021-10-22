@@ -10,7 +10,7 @@ exports.required = (value = true) => ({
 
 exports.forbidden = () => ({
   force: true,
-  message: key => `${key} is forbidden value`,
+  message: key => `${key} is forbidden attribute`,
   validate: predicates.isUndefined,
 })
 
@@ -39,12 +39,17 @@ exports.string = () => ({
   message: key => `${key} should be type of string`,
 })
 
-exports.string.maxLength = length => ({
+exports.string.pattern = pattern => ({
+  validate: value => pattern.test(value),
+  message: key => `${key} should be type of string`,
+})
+
+exports.string.max = length => ({
   validate: value => value.length <= length,
   message: key => `${key} should have less than or equal ${length} characters`,
 })
 
-exports.string.minLength = length => ({
+exports.string.min = length => ({
   validate: value => value.length <= length,
   message: key => `${key} should have more than or equal ${length} characters`,
 })
@@ -60,7 +65,7 @@ exports.string.hasLength = length => ({
 })
 
 exports.number = () => ({
-  validate: predicates.isNumber,
+  validate: value => typeof value === 'number' && predicates.isNumber(value),
   message: key => `${key} should be a number`,
 })
 
@@ -72,11 +77,6 @@ exports.number.min = n => ({
 exports.number.max = n => ({
   validate: value => Number(value) <= n,
   message: key => `${key} should be less than or equal ${n}`,
-})
-
-exports.number.checkType = () => ({
-  validate: value => typeof value === 'number',
-  message: key => `${key} should be type of number`,
 })
 
 exports.boolean = () => ({

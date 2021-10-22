@@ -29,6 +29,10 @@ module.exports = class GenericValidator {
     })
   }
 
+  static expand(obj) {
+    Object.assign(this.prototype, obj)
+  }
+
   getChecks() {
     return this._getChecks()
   }
@@ -92,5 +96,12 @@ module.exports = class GenericValidator {
     }
 
     return []
+  }
+
+  isValid(payload) {
+    return this.assert(payload).then(
+        () => true,
+        () => false,
+    )
   }
 }

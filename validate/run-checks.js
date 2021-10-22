@@ -25,7 +25,7 @@ const runOneCheck = async (check, value, path) => {
   if (!await validate(value)) {
     const message = await getMessage(check.message, value, path)
 
-    return new ValidationError(message, path)
+    return new ValidationError(message, value, path)
   }
 }
 

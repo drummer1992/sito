@@ -1,8 +1,8 @@
 'use strict'
 
-const { object, array, required, number, string } = require('../index')
+const { object, array, number, string } = require('../index')
 
-describe('mk-validator', () => {
+describe('tak', () => {
   describe('shape validation', () => {
     describe('object validation', () => {
       it('check type', () => {
@@ -132,7 +132,7 @@ describe('mk-validator', () => {
 
           await assert.rejects(
               schema.assert([validItem, { ...validItem, name: 'foo' }], { strict: true }),
-              /\[1]\.name is forbidden value/,
+              /\[1]\.name is forbidden attribute/,
           )
 
           await assert.rejects(
@@ -158,7 +158,7 @@ describe('mk-validator', () => {
 
   describe('unit validation', () => {
     it('required', () => {
-      return assert.rejects(required().assert(), /payload is required/)
+      return assert.rejects(string().required().assert(), /payload is required/)
     })
   })
 })

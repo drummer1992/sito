@@ -10,19 +10,23 @@ module.exports = class StringValidator extends GenericValidator {
     this.addCheck(checks.string())
   }
 
-  maxLength(n) {
-    return this.addCheck(checks.string.max(n))
+  max(length) {
+    return this.addCheck(checks.string.max(length))
   }
 
-  minLength(n) {
-    return this.addCheck(checks.string.minLength(n))
+  min(length) {
+    return this.addCheck(checks.string.min(length))
   }
 
-  hasLength(n) {
-    return this.addCheck(checks.string.hasLength(n))
+  length(length) {
+    return this.addCheck(checks.string.hasLength(length))
   }
 
   notEmpty() {
     return this.addCheck(checks.string.notEmpty())
+  }
+
+  pattern(pattern) {
+    return this.addCheck(checks.string.pattern(pattern))
   }
 }
