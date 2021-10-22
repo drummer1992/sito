@@ -144,26 +144,6 @@ const schema = object({ foo: string().required() })
 await schema.assert({}) // throws error with message => foo is required
 ```
 
-### `object.strict(isStrict?: boolean): ObjectValidator`
-
-A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
-
-```js
-const schema = object({ foo: string().required() }).strict()
-
-await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz is forbidden attribute
-```
-
-### `array.strict(isStrict?: boolean): ArrayValidator`
-
-A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
-
-```js
-const schema = array([string().required()]).strict()
-
-await schema.assert(['foo', 'bar']) // throws error with message => [1] is forbidden attribute
-```
-
 ### `validator.assertBulk(payload: any): Promise<void>`
 
 `assertBulk` method forces to validate the whole payload and collect errors, if there are some errors, BulkValidationError will be thrown
@@ -195,6 +175,26 @@ await schema.validate({ foo: 'bar', baz: 42 })
 
 ```js
 await array([number()]).isValid(['ops']) // false 
+```
+
+### `object.strict(isStrict?: boolean): ObjectValidator`
+
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
+
+```js
+const schema = object({ foo: string().required() }).strict()
+
+await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz is forbidden attribute
+```
+
+### `array.strict(isStrict?: boolean): ArrayValidator`
+
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
+
+```js
+const schema = array([string().required()]).strict()
+
+await schema.assert(['foo', 'bar']) // throws error with message => [1] is forbidden attribute
 ```
 
 #### `validator.required(isRequired?: boolean): GenericValidator`
