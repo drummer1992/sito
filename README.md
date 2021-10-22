@@ -104,11 +104,11 @@ const {
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
   - [ArrayValidator](#array)
-    - [`array.strict(itemValidator: GenericValidator): ArrayValidator`](#arraystrictitemvalidator-genericvalidator-arrayvalidator)
+    - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictitemvalidator-genericvalidator-arrayvalidator)
     - [`array.of(itemValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
   - [ObjectValidator](#object)
-    - [`object.strict(itemValidator: GenericValidator): ObjectValidator`](#objectstrictitemvalidator-genericvalidator-objectvalidator)
+    - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictitemvalidator-genericvalidator-objectvalidator)
     - [`object.of(itemValidator: GenericValidator): ObjectValidator`](#objectofitemvalidator-genericvalidator-objectvalidator)
     - [`object.shape(obj: Array): ObjectValidator`](#objectshapeobj-object-objectvalidator)
   - [boolean](#boolean)
@@ -144,7 +144,7 @@ const schema = object({ foo: string().required() })
 await schema.assert({}) // throws error with message => foo is required
 ```
 
-### `object.strict(itemValidator: GenericValidator): ObjectValidator`
+### `object.strict(isStrict?: boolean): ObjectValidator`
 
 A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
 
@@ -154,7 +154,7 @@ const schema = object({ foo: string().required() }).strict()
 await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz is forbidden attribute
 ```
 
-### `array.strict(itemValidator: GenericValidator): ArrayValidator`
+### `array.strict(isStrict?: boolean): ArrayValidator`
 
 A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
 
