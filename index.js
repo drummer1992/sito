@@ -1,6 +1,6 @@
 'use strict'
 
-const checks = require('./lib/checks')
+const checks = require('./lib/checks/list')
 const GenericValidator = require('./lib/validators/generic')
 const StringValidator = require('./lib/validators/string')
 const NumberValidator = require('./lib/validators/number')
@@ -10,9 +10,13 @@ const ArrayValidator = require('./lib/validators/array')
 
 const { ValidationError, BulkValidationError } = require('./lib/errors')
 
-exports.required = value => new GenericValidator().addCheck(checks.required(value))
+exports.required = (value = true) => new GenericValidator()
+    .addCheck(checks.required(), { force: value })
+
+exports.forbidden = (value = true) => new GenericValidator()
+    .addCheck(checks.forbidden(), { force: value })
+
 exports.boolean = () => new GenericValidator().addCheck(checks.boolean())
-exports.forbidden = () => new GenericValidator().addCheck(checks.forbidden())
 exports.oneOf = values => new GenericValidator().addCheck(checks.oneOf(values))
 exports.string = () => new StringValidator()
 exports.number = () => new NumberValidator()

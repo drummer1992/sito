@@ -22,9 +22,10 @@ describe('tak', () => {
           foo: object({
             bar: object({
               baz: object({
-                n: number()
+                n: string()
                     .required(false)
-                    .message('custom message that will not show'),
+                    .message('custom message that will not show')
+                    .notEmpty(),
               }).required(),
             }).required(),
           }).required(),
@@ -36,11 +37,18 @@ describe('tak', () => {
           await assert.rejects(schema.assert({ foo: { bar: {} } }), /foo\.bar\.baz is required/)
 
           await assert.rejects(
-              schema.assert({ foo: { bar: { baz: { n: 'asd' } } } }),
-              /foo\.bar\.baz\.n should be a number/,
+              schema.assert({ foo: { bar: { baz: { n: 5 } } } }),
+              /foo\.bar\.baz\.n should be type of string/,
           )
 
-          await schema.assert({ foo: { bar: { baz: { n: 5 } } } })
+          await assert.rejects(
+              schema.assertBulk({ foo: { bar: { baz: { n: 5 } } } }),
+              error => {
+                assert.strictEqual(error.message, 'Bulk Validation Failed')
+
+                return true
+              },
+          )
         })
       })
 
