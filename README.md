@@ -1,6 +1,6 @@
 # tak
 
-tak is a lightweight validator built without any dependencies. 
+tak is a lightweight schema validator built without any dependencies. 
 
 ## Usage
 
