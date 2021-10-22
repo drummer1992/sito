@@ -135,8 +135,6 @@ Define a generic validator.
 ### `validator.assert(payload: any, { bulk: boolean, strict: boolean }): Promise<void>`
 
 ```js
-const { string } = require('tak')
-
 const schema = object({ foo: string().required() })
 
 await schema.assert({}) // throws error with message => foo is required
@@ -145,8 +143,6 @@ await schema.assert({}) // throws error with message => foo is required
 A strict flag makes the schema strict, it means that each attribute that is not defined in the schema will be rejected
 
 ```js
-const { string } = require('tak')
-
 const schema = object({ foo: string().required() })
 
 await schema.assert({ foo: 'bar', baz: 42 }, { strict: true }) // throws error with message => baz is forbidden attribute
@@ -155,8 +151,6 @@ await schema.assert({ foo: 'bar', baz: 42 }, { strict: true }) // throws error w
 Bulk flag forces to validate the whole payload and collect errors, if there are some errors, BulkValidationError will be thrown
 
 ```js
-const { string } = require('tak')
-
 const schema = object({ foo: string().required() })
 
 await schema.assert({ foo: 'bar', baz: 42 }, { bulk: true, strict })
@@ -170,8 +164,6 @@ await schema.assert({ foo: 'bar', baz: 42 }, { bulk: true, strict })
 Validate method performs validation and returns an array of the errors
 
 ```js
-const { string } = require('tak')
-
 const schema = object({ foo: string().required() })
 
 await schema.validate({ foo: 'bar', baz: 42 }, { bulk: true, strict })
@@ -184,16 +176,12 @@ await schema.validate({ foo: 'bar', baz: 42 }, { bulk: true, strict })
 IsValid method performs validation and returns `true` in case succeeded validation, otherwise `false`
 
 ```js
-const { string } = require('tak')
-
 await array([number()]).isValid(['ops']) // false 
 ```
 
 #### `validator.required(isRequired?: boolean): GenericValidator`
 
 ```js
-const { string } = require('tak')
-
 const schema = string().required()
 
 await schema.assert('tak') // => ok
@@ -202,8 +190,6 @@ await schema.assert('tak') // => ok
 #### `validator.message(message?: string | function): GenericValidator`
 
 ```js
-const { string } = require('tak')
-
 const schema = string().message('custom message')
 
 await schema.assert(5) // => custom message
@@ -212,8 +198,6 @@ await schema.assert(5) // => custom message
 Message method takes function as well:
 
 ```js
-const { string, object } = require('tak')
-
 const schema = object({
   foo: string().message(path => `${path} is not valid`)
 })
@@ -226,8 +210,6 @@ await schema.assert({ foo: 5 }) // => foo is not valid
 You can enrich validator with custom check usee `addCheck` method
 
 ```js
-const { string, object } = require('tak')
-
 const schema = object({
   foo: string().addCheck({
     message: path => `${path} is not valid`,
