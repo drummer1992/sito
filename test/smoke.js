@@ -94,17 +94,17 @@ describe('tak', () => {
       })
 
       describe('nested validation', () => {
-        const schema = array(object({
-          foo: object({
-            bar: object({
-              baz: object({
-                n: array(number().required()).notEmpty().required(),
-              }).required(),
-            }).required(),
-          }).required(),
-        }))
-            .required()
-            .notEmpty()
+        const schema = array(
+            object({
+              foo: object({
+                bar: object({
+                  baz: object({
+                    n: array(number().required()).notEmpty().required(),
+                  }).strict().required(),
+                }).strict().required(),
+              }).strict().required(),
+            }).strict(),
+        ).strict().required().notEmpty()
 
         it('smoke', async () => {
           const validItem = { foo: { bar: { baz: { n: [5] } } } }
@@ -131,7 +131,7 @@ describe('tak', () => {
           await assert.rejects(schema.assert([validItem, { foo: { bar: {} } }]), /\[1]\.foo\.bar\.baz is required/)
 
           await assert.rejects(
-              schema.assert([validItem, { ...validItem, name: 'foo' }], { strict: true }),
+              schema.assert([validItem, { ...validItem, name: 'foo' }]),
               /\[1]\.name is forbidden attribute/,
           )
 

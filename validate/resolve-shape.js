@@ -2,11 +2,11 @@
 
 const { forbidden } = require('../index')
 
-module.exports = (validator, payload, { strict } = {}) => {
-  const validatorShape = validator.getShape()
-  const itemValidator = validator.getItemValidator()
+module.exports = (schemaValidator, payload) => {
+  const validatorShape = schemaValidator.getShape()
+  const itemValidator = schemaValidator.getItemValidator()
 
-  const shouldSetAdditionalValidator = Boolean(strict || itemValidator)
+  const shouldSetAdditionalValidator = Boolean(schemaValidator.isStrict() || itemValidator)
 
   if (shouldSetAdditionalValidator) {
     const payloadKeys = payload ? Object.keys(payload) : []
@@ -16,7 +16,7 @@ module.exports = (validator, payload, { strict } = {}) => {
         validatorShape[key] = itemValidator
       }
 
-      if (strict && !validatorShape[key]) {
+      if (schemaValidator.isStrict() && !validatorShape[key]) {
         validatorShape[key] = forbidden()
       }
     }

@@ -1,6 +1,7 @@
-# tak
+# Tak
 
-tak is a lightweight schema validator built without any dependencies. 
+Tak is a JavaScript lightweight schema validator built without any dependencies. 
+The API is heavily inspired by [Yup](https://github.com/jquense/yup).
 
 ## Usage
 
@@ -85,8 +86,9 @@ const {
   - [`ValidationError(message: string, value: any, path: string)`](#validationerrormessage-string-value-any-path-string)
   - [`BulkValidationError(errors: ValidationError[])`](#bulkvalidationerrorerrors-validationerror)
   - [GenericValidator](#generic)
-    - [`validator.assert(payload: any, { bulk: boolean, strict: boolean }): Promise<void>`](#validatorassertpayload-any--bulk-boolean-strict-boolean--promisevoid)
-    - [`validator.validate(payload: any, { strict: boolean }): Promise<ValidationError[]>`](#validatorvalidatepayload-any--strict-boolean--promisevalidationerror)
+    - [`validator.assert(payload: any): Promise<void>`](#validatorassertpayload-any-promisevoid)
+    - [`validator.assertBulk(payload: any): Promise<void>`](#validatorassertbulkpayload-any-promisevoid)
+    - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
     - [`validator.message(message?: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
@@ -102,9 +104,11 @@ const {
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
   - [ArrayValidator](#array)
+    - [`array.strict(itemValidator: GenericValidator): ArrayValidator`](#arraystrictitemvalidator-genericvalidator-arrayvalidator)
     - [`array.of(itemValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
   - [ObjectValidator](#object)
+    - [`object.strict(itemValidator: GenericValidator): ObjectValidator`](#objectstrictitemvalidator-genericvalidator-objectvalidator)
     - [`object.of(itemValidator: GenericValidator): ObjectValidator`](#objectofitemvalidator-genericvalidator-objectvalidator)
     - [`object.shape(obj: Array): ObjectValidator`](#objectshapeobj-object-objectvalidator)
   - [boolean](#boolean)
@@ -117,7 +121,7 @@ const {
 Thrown on failed validations, with the following properties
 
 - `name`: "ValidationError"
-- `path`: a string, indicates where the error thrown. `path` is equal `payload` at the root level.
+- `path`: a string, indicates where the error thrown. `path` is equal to `payload` at the root level.
 - `message`: error message
 
 #### `BulkValidationError(errors: ValidationError[])`
@@ -132,7 +136,7 @@ Thrown on failed validations, with the following properties
 
 Define a generic validator.
 
-### `validator.assert(payload: any, { bulk: boolean, strict: boolean }): Promise<void>`
+### `validator.assert(payload: any): Promise<void>`
 
 ```js
 const schema = object({ foo: string().required() })
@@ -140,40 +144,54 @@ const schema = object({ foo: string().required() })
 await schema.assert({}) // throws error with message => foo is required
 ```
 
-A strict flag makes the schema strict, it means that each attribute that is not defined in the schema will be rejected
+### `object.strict(itemValidator: GenericValidator): ObjectValidator`
+
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
 
 ```js
-const schema = object({ foo: string().required() })
+const schema = object({ foo: string().required() }).strict()
 
-await schema.assert({ foo: 'bar', baz: 42 }, { strict: true }) // throws error with message => baz is forbidden attribute
+await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz is forbidden attribute
 ```
 
-Bulk flag forces to validate the whole payload and collect errors, if there are some errors, BulkValidationError will be thrown
+### `array.strict(itemValidator: GenericValidator): ArrayValidator`
+
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
 
 ```js
-const schema = object({ foo: string().required() })
+const schema = array([string().required()]).strict()
 
-await schema.assert({ foo: 'bar', baz: 42 }, { bulk: true, strict })
+await schema.assert(['foo', 'bar']) // throws error with message => [1] is forbidden attribute
+```
+
+### `validator.assertBulk(payload: any): Promise<void>`
+
+`assertBulk` method forces to validate the whole payload and collect errors, if there are some errors, BulkValidationError will be thrown
+
+```js
+const schema = object({ foo: string().required() }).strict()
+
+await schema.assertBulk({ foo: 'bar', baz: 42 })
  
 // throws error => { message: 'Bulk Validation Failed', errors: [{ message: 'baz is forbidden attribute', path: 'baz', value: 42 }] } 
 ```
  
 
-### `validator.validate(payload: any, { strict: boolean }): Promise<ValidationError[]>`
+### `validator.validate(payload: any): Promise<ValidationError[]>`
 
-Validate method performs validation and returns an array of the errors
+`validate` method performs validation and returns an array of the errors
 
 ```js
-const schema = object({ foo: string().required() })
+const schema = object({ foo: string().required() }).strict()
 
-await schema.validate({ foo: 'bar', baz: 42 }, { bulk: true, strict })
+await schema.validate({ foo: 'bar', baz: 42 })
  
 // returns => [{ message: 'baz is forbidden attribute', path: 'baz', value: 42 }] 
 ```
 
 ### `validator.isValid(payload: any): Promise<Boolean>`
 
-IsValid method performs validation and returns `true` in case succeeded validation, otherwise `false`
+`isValid` method performs validation and returns `true` in case of successful validation, otherwise `false`
 
 ```js
 await array([number()]).isValid(['ops']) // false 
@@ -195,7 +213,7 @@ const schema = string().message('custom message')
 await schema.assert(5) // => custom message
 ```
 
-Message method takes function as well:
+`message` method takes function as well:
 
 ```js
 const schema = object({
@@ -207,7 +225,7 @@ await schema.assert({ foo: 5 }) // => foo is not valid
 
 ### `validator.addCheck({ message: string | function, validate: function }): GenericValidator`
 
-You can enrich validator with custom check usee `addCheck` method
+You can enrich validator with custom check using `addCheck` method
 
 ```js
 const schema = object({
@@ -220,7 +238,7 @@ const schema = object({
 await schema.assert({ foo: 5 }) // => foo is not valid
 ```
 
-This may also be required if you need to expanding the validator prototype
+This may also be required if you need to expand the validator's prototype
 
 ```js
 NumberValidator.expand({
@@ -259,15 +277,15 @@ await string().assert('tak') // => ok
 
 #### `string.length(limit: number): StringValidator`
 
-Set an expected length for the string.
+Set the expected length for the string.
 
 #### `string.min(limit: number): StringValidator`
 
-Set min expected length for the string.
+Set the minimum expected length for the string.
 
 #### `string.max(limit: number): StringValidator`
 
-Set max expected length for the string.
+Set the maximum expected length for the string.
 
 #### `string.pattern(regex: Regex): StringValidator`
 
@@ -405,7 +423,7 @@ await required().isValid(null) // => false
 await required().isValid('foo') // => true
 ```
 
-Method takes flag `isRequired` so you can disable such validator on fly.
+Method takes flag `isRequired` so you can disable such validator on the fly.
 
 ```js
 await required(false).isValid(null) // => true

@@ -28,6 +28,11 @@ module.exports = class SchemaValidator extends GenericValidator {
         enumerable: false,
         writable: true,
       },
+      _isStrict: {
+        value: false,
+        enumerable: false,
+        writable: true,
+      },
     })
   }
 
@@ -41,6 +46,16 @@ module.exports = class SchemaValidator extends GenericValidator {
     }
 
     return validator
+  }
+
+  isStrict() {
+    return this._isStrict
+  }
+
+  strict(value = true) {
+    this._isStrict = value
+
+    return this
   }
 
   of(itemValidator) {
