@@ -208,12 +208,11 @@ await schema.assert({ foo: 5 }) // => foo is not valid
 
 You can enrich validator with custom check using `addCheck` method, 
 please note that each check is `optional` by default,
-it means that the validation won't run if the value isn't defined,
-but you can change it by using `optional` flag as described below.
-It has `common` flag also (`false` by default) which needed to force the validator to perform each validate call with such check,
-note that a generic flag can only be defined once. 
-It might be useful when you need to create custom validator, 
-for example we need to check that the provided value is Date for each DateValidator check.
+it means that the validation won't run if the value isn't defined.
+It has `common` flag also (`false` by default) which need to force the validator to perform each validate call with such check,
+note that the `common` flag can only be defined once,
+`common` flag might be useful when you need to create custom validator, 
+for example we need to check that the provided value is a `Date` for each DateValidator check.
 
 ```js
 class DateValidator extends GenericValidator {
