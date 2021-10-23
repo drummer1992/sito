@@ -1,6 +1,6 @@
 'use strict'
 
-const checks = require('./lib/checks/list')
+const checks = require('./lib/validators/checks/list')
 const GenericValidator = require('./lib/validators/generic')
 const StringValidator = require('./lib/validators/string')
 const NumberValidator = require('./lib/validators/number')
