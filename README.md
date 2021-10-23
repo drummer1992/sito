@@ -94,7 +94,7 @@ import {
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
     - [`validator.message(message: string | function(path: string, value: any, key: string|void): string): GenericValidator`](#validatormessagemessage-string--functionpath-string-value-any-key-stringvoid-string-genericvalidator)
-    - [`validator.addCheck({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`](#validatoraddcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean---optional-true-common-false--genericvalidator)
+    - [`validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean---optional-true-common-false--genericvalidator)
     - [`validator.combine(validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
   - [StringValidator](#string)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
@@ -228,15 +228,15 @@ const schema = object({
 await schema.assert({ foo: 5 }) // throws error with message => foo is not valid
 ```
 
-### `validator.addCheck({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`
+### `validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`
 
-You can enrich validator with custom check using `addCheck` method.
+You can enrich validator with custom check using `check` method.
 
 ```js
     const secret = 'mankivka'
 
     const schema = object({
-      secret: new GenericValidator().addCheck({
+      secret: new GenericValidator().check({
                     message: (path, value, key) => `secret is not valid, path: ${path}, value: ${value}, key: ${key}`,
                     validate: value => value === secret,
                   }, { optional: false })
@@ -254,14 +254,14 @@ class DateValidator extends GenericValidator {
   constructor() {
    super()
 
-   this.addCheck({
+   this.check({
       message: path => `${path} is not a date`,
       validate: value => new Date(value).toString() !== 'Invalid Date',
    }, { common: true })
   }
 
   inFuture() {
-    return this.addCheck({
+    return this.check({
        message: path => `${path} should be in future`,
        validate: value => new Date(value).getTime() > Date.now(),
     })
@@ -305,7 +305,7 @@ This may also be required if you need to expand the validator's prototype
 ```js
 NumberValidator.expand({
   safe() {
-    return this.addCheck({
+    return this.check({
       validate: value => value < Number.MAX_SAFE_INTEGER,
       message: key => `${key} is not safe`,
     })
@@ -321,7 +321,7 @@ It might be useful if you need to merge validators
 const userIdSchema = string().max(50).required()
     .combine(
       new GenericValidator()
-        .addCheck({
+        .check({
           validate: value => User.exists({ where: { id: value } }),
           message: (path, value) => `User not found by id ${value}`,
         })

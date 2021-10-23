@@ -326,14 +326,14 @@ describe('sito', () => {
           constructor() {
             super()
 
-            this.addCheck({
+            this.check({
               message: path => `${path} is not a date`,
               validate: value => new Date(value).toString() !== 'Invalid Date',
             }, { common: true })
           }
 
           inFuture() {
-            return this.addCheck({
+            return this.check({
               message: path => `${path} should be in future`,
               validate: value => new Date(value).getTime() > Date.now(),
             })
@@ -355,11 +355,11 @@ describe('sito', () => {
         })
       })
 
-      it('addCheck', () => {
+      it('check', () => {
         const secret = 'mankivka'
 
         const schema = object({
-          secret: new GenericValidator().addCheck({
+          secret: new GenericValidator().check({
             message: (path, value, key) => `secret is not valid, path: ${path}, value: ${value}, key: ${key}`,
             validate: value => value === secret,
           }, { optional: false }),
@@ -372,7 +372,7 @@ describe('sito', () => {
       it('expand', () => {
         NumberValidator.expand({
           safe() {
-            return this.addCheck({
+            return this.check({
               validate: value => value < Number.MAX_SAFE_INTEGER,
               message: key => `${key} is not safe`,
             })
@@ -388,7 +388,7 @@ describe('sito', () => {
         const userIdSchema = string().max(50).required()
             .combine(
                 new GenericValidator()
-                    .addCheck({
+                    .check({
                       validate: value => database.includes(value),
                       message: (path, value) => `user not found by id ${value}`,
                     }, { optional: false }),
