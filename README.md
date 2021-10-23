@@ -91,7 +91,7 @@ const {
     - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
-    - [`validator.message(message?: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
+    - [`validator.message(message: string | function(path: string, value: any, key: string|void): string): GenericValidator`](#validatormessagemessage-string--functionpath-string-value-any-key-stringvoid-string-genericvalidator)
     - [`validator.addCheck({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`](#validatoraddcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean---optional-true-common-false--genericvalidator)
     - [`validator.combine(validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
   - [StringValidator](#string)
@@ -186,7 +186,9 @@ const schema = string().required()
 await schema.assert('tak') // => ok
 ```
 
-#### `validator.message(message?: string | function): GenericValidator`
+#### `validator.message(message?: string | function(path: string, value: any, key: string|void): string): GenericValidator`
+
+Set custom `message`:
 
 ```js
 const schema = string().message('custom message')
