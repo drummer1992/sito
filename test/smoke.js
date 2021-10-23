@@ -2,7 +2,7 @@
 
 const { object, array, number, string } = require('../lib')
 
-describe('tak', () => {
+describe('sito', () => {
   describe('shape validation', () => {
     describe('object validation', () => {
       it('check type', () => {

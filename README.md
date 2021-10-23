@@ -1,6 +1,6 @@
-# Tak
+# Sito
 
-Tak is a JavaScript lightweight schema validator built without any dependencies. 
+Sito is a JavaScript lightweight schema validator built without any dependencies. 
 The API is heavily inspired by [Yup](https://github.com/jquense/yup).
 
 ## Usage
@@ -9,7 +9,7 @@ Define a validator, validate the object, array or any scalar values.
 The schema definition is extremely declarative that allows building complex schemas of interdependent validators.
 
 ```js
-const { object, array, number, string } = require('tak')
+const { object, array, number, string } = require('sito')
 
 const objectSchema = object({
   foo: object({
@@ -65,7 +65,7 @@ const {
   string,
   object,
   array,
-} = require('tak')
+} = require('sito')
 ```
 
 If you need the validator classes, they are also exported:
@@ -77,12 +77,12 @@ const {
   SchemaValidator,
   ObjectValidator,
   ArrayValidator,
-} = require('tak')
+} = require('sito')
 ```
 
 ## API
 
-- `tak`
+- `Sito`
   - [`ValidationError(message: string, value: any, path: string, key: string)`](#validationerrormessage-string-value-any-path-string-key-string)
   - [`BulkValidationError(errors: ValidationError[])`](#bulkvalidationerrorerrors-validationerror)
   - [GenericValidator](#generic)
@@ -183,7 +183,7 @@ await array([number()]).isValid(['ops']) // false
 ```js
 const schema = string().required()
 
-await schema.assert('tak') // => ok
+await schema.assert('sito') // => ok
 ```
 
 #### `validator.message(message?: string | function(path: string, value: any, key: string|void): string): GenericValidator`
@@ -279,7 +279,7 @@ const userIdSchema = string().max(50).required()
 Define a string validator.
 
 ```js
-await string().assert('tak') // => ok
+await string().assert('sito') // => ok
 ```
 
 #### `string.length(limit: number): StringValidator`

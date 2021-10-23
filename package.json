@@ -1,5 +1,5 @@
 {
-  "name": "tak",
+  "name": "sito",
   "version": "0.0.1",
   "description": "This is a simple schema validator built without dependencies",
   "main": "lib/index.js",
@@ -7,13 +7,13 @@
     "test": "mocha",
     "lint": "eslint --fix"
   },
-  "homepage": "https://github.com/drummer1992/tak",
+  "homepage": "https://github.com/drummer1992/sito",
   "bugs": {
-    "url": "https://github.com/drummer1992/tak/issues"
+    "url": "https://github.com/drummer1992/sito/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/drummer1992/tak.git"
+    "url": "git+https://github.com/drummer1992/sito.git"
   },
   "keywords": [],
   "author": "Andrii Varlamov",
