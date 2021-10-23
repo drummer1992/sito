@@ -210,13 +210,24 @@ await schema.assert({ foo: 5 }) // => foo is not valid
 
 ### `validator.addCheck({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`
 
-You can enrich validator with custom check using `addCheck` method, 
-please note that each check is `optional` by default,
-it means that the validation won't run if the value isn't defined.
-It takes `common` flag also (`false` by default) which need to force the validator to perform each validate call with such check,
-note that the `common` flag can only be defined once,
-`common` flag might be useful when you need to create custom validator, 
-for example we need to check that the provided value is a `Date` for each DateValidator check.
+You can enrich validator with custom check using `addCheck` method.
+
+```js
+    const secret = 'mankivka'
+
+    const schema = object({
+      secret: new GenericValidator().addCheck({
+                    message: (path, value, key) => `secret is not valid, path: ${path}, value: ${value}, key: ${key}`,
+                    validate: value => value === secret,
+                  }, { optional: false })
+    })
+
+    await schema.assert('popivka') // throws => secret is not valid, path: ${path}, value: ${value}, key: ${key}
+```
+
+- `optional`: each check is `optional` by default, it means that the validation won't perform if checked value is `undefined`.
+- `common`: forces the validator to run the check marked as `common` before other checks of this validator.
+This allows you not to write extra code for type checks in each `validate` function.
 
 ```js
 class DateValidator extends GenericValidator {
