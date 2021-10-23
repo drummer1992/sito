@@ -161,9 +161,11 @@ await schema.assertBulk({ foo: 'bar', baz: 42 })
  {
    message: 'Bulk Validation Failed',
    errors: [{
+     name: 'ValidationError',
      message: 'baz is forbidden attribute',
      path: 'baz',
      value: 42,
+     key: 'baz'
    }]
  }
 */ 
@@ -179,7 +181,15 @@ const schema = object({ foo: string().required() }).strict()
 
 await schema.validate({ foo: 'bar', baz: 42 })
  
-// => [{ message: 'baz is forbidden attribute', path: 'baz', value: 42 }] 
+/**
+ => [{
+      name: 'ValidationError',
+      message: 'baz is forbidden attribute',
+      path: 'baz',
+      value: 42,
+      key: 'baz'
+ }]
+*/  
 ```
 
 ### `validator.isValid(payload: any): Promise<Boolean>`
