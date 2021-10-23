@@ -63,6 +63,7 @@ import {
   forbidden,
   oneOf,
   string,
+  number,
   object,
   array,
 } from 'sito'
@@ -74,6 +75,7 @@ If you need the validator classes, they are also exported:
 import {
   GenericValidator,
   StringValidator,
+  NumberValidator,
   SchemaValidator,
   ObjectValidator,
   ArrayValidator,
@@ -241,8 +243,8 @@ const schema = object({
   dob: date().inFuture().required()
 }).required()
 
-await schema.assert({ dob: 'not a date' }) // => foo is not a date
-await schema.assert({ dob: 5 }) // => foo should be in future
+await schema.assert({ dob: 'not a date' }) // => dob is not a date
+await schema.assert({ dob: 5 }) // => dob should be in future
 ```
 
 This may also be required if you need to expand the validator's prototype
