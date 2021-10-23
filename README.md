@@ -242,7 +242,7 @@ You can enrich validator with custom check using `check` method.
                   }, { optional: false })
     })
 
-    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid, path: ${path}, value: ${value}, key: ${key}
+    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid, path: secret, value: popivka, key: secret
 ```
 
 - `optional`: each check is `optional` by default, it means that the validation won't perform if checked value is `undefined`.
