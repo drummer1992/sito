@@ -241,8 +241,8 @@ const schema = object({
   dob: date().inFuture().required()
 }).required()
 
-await schema.dob({ foo: 'not a date' }) // => foo is not a date
-await schema.dob({ foo: 5 }) // => foo should be in future
+await schema.assert({ dob: 'not a date' }) // => foo is not a date
+await schema.assert({ dob: 5 }) // => foo should be in future
 ```
 
 This may also be required if you need to expand the validator's prototype
