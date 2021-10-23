@@ -92,7 +92,7 @@ const {
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
     - [`validator.message(message?: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
-    - [`validator.addCheck({ message: string | function, validate: function }, { optional?: true, common?: false }): GenericValidator`](#validatoraddcheck-message-string--function-validate-function---optional-true-common-false--genericvalidator)
+    - [`validator.addCheck({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`](#validatoraddcheck-message-string--function-validate-function---optional-true-common-false--genericvalidator)
     - [`validator.combine(validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
   - [StringValidator](#string)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
@@ -204,7 +204,7 @@ const schema = object({
 await schema.assert({ foo: 5 }) // => foo is not valid
 ```
 
-### `validator.addCheck({ message: string | function, validate: function }, { optional?: true, common?: false }): GenericValidator`
+### ``validator.addCheck({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator``
 
 You can enrich validator with custom check using `addCheck` method, 
 please note that each check is `optional` by default,
