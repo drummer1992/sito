@@ -207,7 +207,7 @@ await schema.assert({ foo: 5 }) // => foo is not valid
 ### `validator.addCheck({ message: string | function, validate: function }, { optional?: true, common?: false }): GenericValidator`
 
 You can enrich validator with custom check using `addCheck` method, 
-please note that each check has `optional` (`true` by default),
+please note that each check is `optional` by default,
 it means that the validation won't run if the value isn't defined,
 but you can change it by using `optional` flag as described below.
 It has `common` flag also (`false` by default) which needed to force the validator to perform each validate call with such check,
