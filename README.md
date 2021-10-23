@@ -178,26 +178,6 @@ await schema.validate({ foo: 'bar', baz: 42 })
 await array([number()]).isValid(['ops']) // false 
 ```
 
-### `object.strict(isStrict?: boolean): ObjectValidator`
-
-A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
-
-```js
-const schema = object({ foo: string().required() }).strict()
-
-await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz is forbidden attribute
-```
-
-### `array.strict(isStrict?: boolean): ArrayValidator`
-
-A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
-
-```js
-const schema = array([string().required()]).strict()
-
-await schema.assert(['foo', 'bar']) // throws error with message => [1] is forbidden attribute
-```
-
 #### `validator.required(isRequired?: boolean): GenericValidator`
 
 ```js
@@ -357,6 +337,17 @@ await schema.isValid(['ab', 'abc']) // => true
 await schema.isValid(['ab', 'a']) // => false
 ```
 
+### `array.strict(isStrict?: boolean): ArrayValidator`
+
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
+
+
+```js
+const schema = array([string().required()]).strict()
+
+await schema.assert(['foo', 'bar']) // throws error with message => [1] is forbidden attribute
+```
+
 #### `array.of(iremValidator: GenericValidator): ArrayValidator`
 
 You can also pass a subtype schema to the array constructor.
@@ -380,11 +371,23 @@ array([number()])
 
 ### object
 
+Define object validator.
+
 ```js
 object({
   name: string().required(),
   age: number().required().positive(),
 })
+```
+
+### `object.strict(isStrict?: boolean): ObjectValidator`
+
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
+
+```js
+const schema = object({ foo: string().required() }).strict()
+
+await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz is forbidden attribute
 ```
 
 #### `object.shape(obj: object): ObjectValidator`
