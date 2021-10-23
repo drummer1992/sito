@@ -9,7 +9,7 @@ Define a validator, validate the object, array or any scalar values.
 The schema definition is extremely declarative that allows building complex schemas of interdependent validators.
 
 ```js
-const { object, array, number, string } = require('sito')
+import { object, array, number, string } from 'sito'
 
 const objectSchema = object({
   foo: object({
@@ -57,7 +57,7 @@ await mapOfValidatorsSchema.assert({
 
 The exported functions are factory methods of validators:
 ```js
-const {
+import {
   required,
   boolean,
   forbidden,
@@ -65,19 +65,19 @@ const {
   string,
   object,
   array,
-} = require('sito')
+} from 'sito'
 ```
 
 If you need the validator classes, they are also exported:
 
 ```js
-const {
+import {
   GenericValidator,
   StringValidator,
   SchemaValidator,
   ObjectValidator,
   ArrayValidator,
-} = require('sito')
+} from 'sito'
 ```
 
 ## API
@@ -238,11 +238,11 @@ class DateValidator extends GenericValidator {
 const date = () => new DateValidator()
 
 const schema = object({
-  dob: date().inFuture()
-})
+  dob: date().inFuture().required()
+}).required()
 
-await schema.assert({ foo: 'not a date' }) // => foo is not a date
-await schema.assert({ foo: 5 }) // => foo should be in future
+await schema.dob({ foo: 'not a date' }) // => foo is not a date
+await schema.dob({ foo: 5 }) // => foo should be in future
 ```
 
 This may also be required if you need to expand the validator's prototype
