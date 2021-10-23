@@ -321,7 +321,7 @@ describe('sito', () => {
         return assert.rejects(schema.assert(5), /custom message/)
       })
 
-      it('inheritance', async () => {
+      it('inheritance', () => {
         class DateValidator extends GenericValidator {
           constructor() {
             super()
@@ -346,8 +346,27 @@ describe('sito', () => {
           dob: date().inFuture().required(),
         }).required()
 
-        await assert.rejects(schema.assert({ dob: 'not a date' }), /dob is not a date/)
-        await assert.rejects(schema.assert({ dob: 5 }), /dob should be in future/)
+        return assert.rejects(schema.assertBulk({ dob: 'not a date' }), e => {
+          assert.strictEqual(e.errors.length, 2)
+          assert.strictEqual(e.errors[0].message, 'dob is not a date')
+          assert.strictEqual(e.errors[1].message, 'dob should be in future')
+
+          return true
+        })
+      })
+
+      it('addCheck', () => {
+        const secret = 'mankivka'
+
+        const schema = object({
+          secret: new GenericValidator().addCheck({
+            message: (path, value, key) => `secret is not valid, path: ${path}, value: ${value}, key: ${key}`,
+            validate: value => value === secret,
+          }, { optional: false }),
+        })
+
+        return assert.rejects(schema.assert({ secret: 'popivka' }),
+            /secret is not valid, path: secret, value: popivka, key: secret/)
       })
 
       it('expand', () => {

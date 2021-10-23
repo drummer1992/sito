@@ -52,7 +52,7 @@ const mapOfValidatorsSchema = object(
 await mapOfValidatorsSchema.assert({
   john: { name: 'john', age: 28 },
   pit: { name: 'pit' },
-}) // pit.age is required
+}) // throws error with message => pit.age is required
 ```
 
 The exported functions are factory methods of validators:
@@ -156,7 +156,17 @@ const schema = object({ foo: string().required() }).strict()
 
 await schema.assertBulk({ foo: 'bar', baz: 42 })
  
-// throws error => { message: 'Bulk Validation Failed', errors: [{ message: 'baz is forbidden attribute', path: 'baz', value: 42 }] } 
+/**
+  throws error =>
+ {
+   message: 'Bulk Validation Failed',
+   errors: [{
+     message: 'baz is forbidden attribute',
+     path: 'baz',
+     value: 42,
+   }]
+ }
+*/ 
 ```
  
 
@@ -169,7 +179,7 @@ const schema = object({ foo: string().required() }).strict()
 
 await schema.validate({ foo: 'bar', baz: 42 })
  
-// returns => [{ message: 'baz is forbidden attribute', path: 'baz', value: 42 }] 
+// => [{ message: 'baz is forbidden attribute', path: 'baz', value: 42 }] 
 ```
 
 ### `validator.isValid(payload: any): Promise<Boolean>`
@@ -185,7 +195,7 @@ await array([number()]).isValid(['ops']) // false
 ```js
 const schema = string().required()
 
-await schema.assert('sito') // => ok
+await schema.assert('sito') // ok
 ```
 
 #### `validator.message(message?: string | function(path: string, value: any, key: string|void): string): GenericValidator`
@@ -195,7 +205,7 @@ Set custom `message`:
 ```js
 const schema = string().message('custom message')
 
-await schema.assert(5) // => custom message
+await schema.assert(5) // throws error with message => custom message
 ```
 
 `message` method takes function as well:
@@ -205,7 +215,7 @@ const schema = object({
   foo: string().message(path => `${path} is not valid`)
 })
 
-await schema.assert({ foo: 5 }) // => foo is not valid
+await schema.assert({ foo: 5 }) // throws error with message => foo is not valid
 ```
 
 ### `validator.addCheck({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`
@@ -222,7 +232,7 @@ You can enrich validator with custom check using `addCheck` method.
                   }, { optional: false })
     })
 
-    await schema.assert('popivka') // throws => secret is not valid, path: ${path}, value: ${value}, key: ${key}
+    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid, path: ${path}, value: ${value}, key: ${key}
 ```
 
 - `optional`: each check is `optional` by default, it means that the validation won't perform if checked value is `undefined`.
@@ -254,8 +264,30 @@ const schema = object({
   dob: date().inFuture().required()
 }).required()
 
-await schema.assert({ dob: 'not a date' }) // => dob is not a date
-await schema.assert({ dob: 5 }) // => dob should be in future
+await schema.assertBulk({ dob: 'not a date' })
+/**
+  throws error =>
+{
+  "name": "BulkValidationError",
+  "message": "Bulk Validation Failed",
+  "errors": [
+    {
+      "name": "ValidationError",
+      "message": "dob is not a date",
+      "path": "dob",
+      "key": "dob",
+      "value": "not a date"
+    },
+    {
+      "name": "ValidationError",
+      "message": "dob should be in future",
+      "path": "dob",
+      "key": "dob",
+      "value": "not a date"
+    }
+  ]
+}
+*/
 ```
 
 This may also be required if you need to expand the validator's prototype
@@ -292,7 +324,7 @@ const userIdSchema = string().max(50).required()
 Define a string validator.
 
 ```js
-await string().assert('sito') // => ok
+await string().assert('sito') // ok
 ```
 
 #### `string.length(limit: number): StringValidator`
@@ -437,7 +469,7 @@ Example of use case
     await schema.assert({
       foo: { name: 'john' },
       bar: { name: 'doe' },
-    })
+    }) // ok
 ```
 
 ### boolean
@@ -480,5 +512,5 @@ Define a forbidden validator.
 await object({
   name: string(),
   gender: forbidden(),
-}).assert({ name: 'john', gender: 'm' }) // throws => gender is forbidden attribute
+}).assert({ name: 'john', gender: 'm' }) // throws error with message => gender is forbidden attribute
 ```
