@@ -2,14 +2,22 @@
   "name": "tak",
   "version": "0.0.1",
   "description": "This is a simple schema validator built without dependencies",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha",
     "lint": "eslint --fix"
   },
+  "homepage": "https://github.com/drummer1992/tak",
+  "bugs": {
+    "url": "https://github.com/drummer1992/tak/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drummer1992/tak.git"
+  },
   "keywords": [],
   "author": "Andrii Varlamov",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "assert": "^2.0.0",

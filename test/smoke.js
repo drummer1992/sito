@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, number, string } = require('../index')
+const { object, array, number, string } = require('../lib')
 
 describe('tak', () => {
   describe('shape validation', () => {
