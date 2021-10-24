@@ -66,6 +66,7 @@ import {
   number,
   object,
   array,
+  check,
 } from 'sito'
 ```
 
@@ -94,29 +95,30 @@ import {
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
     - [`validator.message(message: string | function(path: string, value: any, key: string|void): string): GenericValidator`](#validatormessagemessage-string--functionpath-string-value-any-key-stringvoid-string-genericvalidator)
-    - [`validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean---optional-true-common-false--genericvalidator)
     - [`validator.combine(validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
-  - [StringValidator](#string)
+    - [`validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
+    - [`check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false })`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
+    - [`boolean()`](#boolean)
+    - [`oneOf(values: any[])`](#oneof)
+    - [`required(isRequired?: true)`](#required)
+    - [`forbidden(isForbidden?: true)`](#forbidden)
+  - [StringValidator|string](#string)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
     - [`string.min(limit: number): StringValidator`](#stringminlimit-number-stringvalidator)
     - [`string.max(limit: number): StringValidator`](#stringmaxlimit-number-stringvalidator)
-  - [NumberValidator](#number)
+  - [NumberValidator|number](#number)
     - [`number.min(limit: number): NumberValidator`](#numberminlimit-number-numbervalidator)
     - [`number.max(limit: number): NumberValidator`](#numbermaxlimit-number-numbervalidator)
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
-  - [ArrayValidator](#array)
+  - [ArrayValidator|array](#array)
     - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictitemvalidator-genericvalidator-arrayvalidator)
     - [`array.of(itemValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
-  - [ObjectValidator](#object)
+  - [ObjectValidator|object](#object)
     - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictitemvalidator-genericvalidator-objectvalidator)
     - [`object.of(itemValidator: GenericValidator): ObjectValidator`](#objectofitemvalidator-genericvalidator-objectvalidator)
     - [`object.shape(obj: Array): ObjectValidator`](#objectshapeobj-object-objectvalidator)
-  - [boolean](#boolean)
-  - [oneOf](#oneof)
-  - [required](#required)
-  - [forbidden](#forbidden)
 
 #### `ValidationError(message: string, value: any, path: string, key: string)`
 
@@ -126,6 +128,7 @@ Thrown on failed validations, with the following properties
 - `path`: a string, indicates where the error thrown. `path` is equal to `payload` at the root level.
 - `key`: a string, indicates property key.
 - `message`: error message
+- `value`: checked value
 
 #### `BulkValidationError(errors: ValidationError[])`
 
@@ -136,13 +139,10 @@ Thrown on failed validations, with the following properties
 - `message`: "Bulk Validation Failed"
 
 #### `generic`
-
-Define a generic validator.
-
 ### `validator.assert(payload: any): Promise<void>`
 
 ```js
-const schema = object({ foo: string().required() })
+const schema = object({ foo: required() })
 
 await schema.assert({}) // throws error with message => foo is required
 ```
@@ -152,7 +152,7 @@ await schema.assert({}) // throws error with message => foo is required
 `assertBulk` method forces to validate the whole payload and collect errors, if there are some errors, BulkValidationError will be thrown
 
 ```js
-const schema = object({ foo: string().required() }).strict()
+const schema = object({ foo: required() }).strict()
 
 await schema.assertBulk({ foo: 'bar', baz: 42 })
  
@@ -177,7 +177,7 @@ await schema.assertBulk({ foo: 'bar', baz: 42 })
 `validate` method performs validation and returns an array of the errors
 
 ```js
-const schema = object({ foo: string().required() }).strict()
+const schema = object({ foo: required() }).strict()
 
 await schema.validate({ foo: 'bar', baz: 42 })
  
@@ -202,6 +202,8 @@ await array([number()]).isValid(['ops']) // false
 
 #### `validator.required(isRequired?: boolean): GenericValidator`
 
+Method takes flag `isRequired` so you can disable such check on the fly.
+
 ```js
 const schema = string().required()
 
@@ -222,13 +224,13 @@ await schema.assert(5) // throws error with message => custom message
 
 ```js
 const schema = object({
-  foo: string().message(path => `${path} is not valid`)
+  foo: string().message((path, value, key) => `${path} is not valid`,)
 })
 
 await schema.assert({ foo: 5 }) // throws error with message => foo is not valid
 ```
 
-### `validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean> }, { optional?: true, common?: false }): GenericValidator`
+### `validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`
 
 You can enrich validator with custom check using `check` method.
 
@@ -237,14 +239,35 @@ You can enrich validator with custom check using `check` method.
 
     const schema = object({
       secret: new GenericValidator().check({
-                    message: (path, value, key) => `secret is not valid, path: ${path}, value: ${value}, key: ${key}`,
+                    optional: false,
+                    message: 'secret is not valid',
                     validate: value => value === secret,
-                  }, { optional: false })
+                  })
     })
 
-    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid, path: secret, value: popivka, key: secret
+    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
 ```
 
+### `check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`
+
+Also, you can create a generic validator with a custom check using the `check` factory.
+
+```js
+    const secret = 'mankivka'
+
+    const schema = object({
+      secret: check({
+                    optional: false,
+                    message: path => `${path} is not valid`,
+                    validate: value => value === secret,
+              })
+    })
+
+    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
+```
+
+- `message` - error message or function which returns error message
+- `validate` - the function which will be performed during validation
 - `optional`: each check is `optional` by default, it means that the validation won't perform if checked value is `undefined`.
 - `common`: forces the validator to run the check marked as `common` before other checks of this validator.
 This allows you not to write extra code for type checks in each `validate` function.
@@ -255,9 +278,10 @@ class DateValidator extends GenericValidator {
    super()
 
    this.check({
+      common: true,
       message: path => `${path} is not a date`,
       validate: value => new Date(value).toString() !== 'Invalid Date',
-   }, { common: true })
+   })
   }
 
   inFuture() {
@@ -320,12 +344,58 @@ It might be useful if you need to merge validators
 ```js
 const userIdSchema = string().max(50).required()
     .combine(
-      new GenericValidator()
-        .check({
+      check({
           validate: value => User.exists({ where: { id: value } }),
           message: (path, value) => `User not found by id ${value}`,
         })
     )
+```
+
+### boolean
+
+Define a boolean validator.
+
+```js
+const validator = boolean()
+
+await validator.isValid(true) // => true
+```
+
+### oneOf
+
+Define a oneOf validator.
+
+```js
+const  validator = oneOf([1, 2])
+
+await validator.isValid(1) // => true
+await validator.isValid(3) // => false
+```
+
+### required
+
+Define a required validator.
+
+```js
+await required().isValid(null) // => false
+await required().isValid('foo') // => true
+```
+
+Method takes flag `isRequired` so you can disable such check on the fly.
+
+```js
+await required(false).isValid(null) // => true
+```
+
+### forbidden
+
+Define a forbidden validator.
+
+```js
+await object({
+  name: string(),
+  gender: forbidden(),
+}).assert({ name: 'john', gender: 'm' }) // throws error with message => gender is forbidden attribute
 ```
 
 
@@ -387,15 +457,15 @@ Value must be a negative number.
 Define an array validator.
 
 ```js
-const schema = array().of(string().min(2))
+const schema = array()
 
-await schema.isValid(['ab', 'abc']) // => true
-await schema.isValid(['ab', 'a']) // => false
+await schema.assert({}) // throws error with message => payload should be type of array
 ```
+
 
 ### `array.strict(isStrict?: boolean): ArrayValidator`
 
-A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected.
 
 
 ```js
@@ -405,6 +475,13 @@ await schema.assert(['foo', 'bar']) // throws error with message => [1] is forbi
 ```
 
 #### `array.of(iremValidator: GenericValidator): ArrayValidator`
+
+```js
+const schema = array().of(string().min(2))
+
+await schema.isValid(['ab', 'abc']) // => true
+await schema.isValid(['ab', 'a']) // => false
+```
 
 You can also pass a subtype schema to the array constructor.
 
@@ -438,7 +515,7 @@ object({
 
 ### `object.strict(isStrict?: boolean): ObjectValidator`
 
-A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected
+A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected.
 
 ```js
 const schema = object({ foo: string().required() }).strict()
@@ -470,7 +547,7 @@ object().of(number())
 object(number())
 ```
 
-Example of use case
+Example of use case.
 ```js
     const schema = object(
       object({ name: string() })
@@ -480,47 +557,4 @@ Example of use case
       foo: { name: 'john' },
       bar: { name: 'doe' },
     }) // ok
-```
-
-### boolean
-
-Define a boolean validator.
-
-```js
-await boolean().isValid(true) // => true
-```
-
-### oneOf
-
-Define a oneOf validator.
-
-```js
-await oneOf([1, 2]).isValid(1) // => true
-await oneOf([1, 2]).isValid(3) // => false
-```
-
-### required
-
-Define a required validator.
-
-```js
-await required().isValid(null) // => false
-await required().isValid('foo') // => true
-```
-
-Method takes flag `isRequired` so you can disable such validator on the fly.
-
-```js
-await required(false).isValid(null) // => true
-```
-
-### forbidden
-
-Define a forbidden validator.
-
-```js
-await object({
-  name: string(),
-  gender: forbidden(),
-}).assert({ name: 'john', gender: 'm' }) // throws error with message => gender is forbidden attribute
 ```
