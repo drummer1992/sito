@@ -94,6 +94,7 @@ import {
     - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
+    - [`validator.forbidden(isForbidden?: boolean): GenericValidator`](#validatorforbiddenisforbidden-boolean-genericvalidator)
     - [`validator.message(message: string | function(path: string, value: any, key: string|void): string): GenericValidator`](#validatormessagemessage-string--functionpath-string-value-any-key-stringvoid-string-genericvalidator)
     - [`validator.combine(validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
     - [`validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
@@ -208,6 +209,27 @@ Method takes flag `isRequired` so you can disable such check on the fly.
 const schema = string().required()
 
 await schema.assert('sito') // ok
+```
+
+#### `validator.forbidden(isForbidden?: boolean): GenericValidator`
+
+Method takes flag `isForbidden` so you can disable such check on the fly.
+
+```js
+  const MALE = 'm'
+  const FEMALE = 'f'
+
+    const schema = object({
+      name: string(),
+      gender: oneOf([FEMALE, MALE]),
+      age: (value, key, obj) => number()
+          .min(18)
+          .forbidden(obj.gender === FEMALE)
+          .message('It is not decent to ask a woman about her age 8)'),
+    })
+
+
+await schema.assert({ name: 'Zina', gender: 'f', age: 38 }) // It is not decent to ask a woman about her age 8)
 ```
 
 #### `validator.message(message?: string | function(path: string, value: any, key: string|void): string): GenericValidator`
@@ -356,9 +378,11 @@ const userIdSchema = string().max(50).required()
 Define a boolean validator.
 
 ```js
-const validator = boolean()
+boolean()
+```
 
-await validator.isValid(true) // => true
+```js
+await boolean().isValid(true) // => true
 ```
 
 ### oneOf
@@ -377,8 +401,9 @@ await validator.isValid(3) // => false
 Define a required validator.
 
 ```js
-await required().isValid(null) // => false
-await required().isValid('foo') // => true
+string().required()
+// or
+required()
 ```
 
 Method takes flag `isRequired` so you can disable such check on the fly.
@@ -392,16 +417,25 @@ await required(false).isValid(null) // => true
 Define a forbidden validator.
 
 ```js
-await object({
-  name: string(),
-  gender: forbidden(),
-}).assert({ name: 'john', gender: 'm' }) // throws error with message => gender is forbidden attribute
+string().forbidden()
+// or
+forbidden()
+```
+
+Method takes flag `isForbidden` so you can disable such check on the fly.
+
+```js
+await forbidden(false).isValid({}) // => true
 ```
 
 
 ### string
 
 Define a string validator.
+
+```js
+string()
+```
 
 ```js
 await string().assert('sito') // ok
@@ -433,6 +467,10 @@ await string().pattern(/(foo|bar)/).isValid('baz') // => false
 Define a number validator.
 
 ```js
+number()
+```
+
+```js
 await number().isValid(10) // => true
 ```
 
@@ -457,9 +495,11 @@ Value must be a negative number.
 Define an array validator.
 
 ```js
-const schema = array()
+array()
+```
 
-await schema.assert({}) // throws error with message => payload should be type of array
+```js
+await array().assert({}) // throws error with message => payload should be type of array
 ```
 
 
@@ -507,10 +547,7 @@ array([number()])
 Define object validator.
 
 ```js
-object({
-  name: string().required(),
-  age: number().required().positive(),
-})
+object()
 ```
 
 ### `object.strict(isStrict?: boolean): ObjectValidator`
@@ -518,7 +555,9 @@ object({
 A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected.
 
 ```js
-const schema = object({ foo: string().required() }).strict()
+const schema = object({ 
+  foo: string().required(),
+}).strict()
 
 await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz is forbidden attribute
 ```

@@ -19,16 +19,25 @@ describe('generic', () => {
     assert.strictEqual(await required(false).isValid(null), true)
   })
 
-  it('forbidden', () => {
+  it('forbidden', async () => {
+    const MALE = 'm'
+    const FEMALE = 'f'
+
     const schema = object({
       name: string(),
-      gender: forbidden(),
+      gender: oneOf([FEMALE, MALE]),
+      age: (value, key, obj) => number()
+          .min(18)
+          .forbidden(obj.gender === FEMALE)
+          .message('It is not decent to ask a woman about her age 8)'),
     })
 
-    return assert.rejects(
-        schema.assert({ name: 'john', gender: 'm' }),
-        /gender is forbidden attribute/,
+    await assert.rejects(
+        schema.assert({ name: 'john', gender: 'f', age: 38 }),
+        /It is not decent to ask a woman about her age 8\)/,
     )
+
+    await forbidden(false).isValid({})
   })
 
   it('isValid', async () => {
