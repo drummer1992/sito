@@ -1,11 +1,11 @@
 {
   "name": "sito",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "This is a simple schema validator built without dependencies",
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha",
-    "lint": "eslint --fix"
+    "lint": "eslint lib test --fix"
   },
   "homepage": "https://github.com/drummer1992/sito",
   "bugs": {

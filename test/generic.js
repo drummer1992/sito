@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, number, string, boolean, oneOf, required, forbidden, check } = require('../lib')
+const { object, array, number, string, boolean, oneOf, required, check } = require('../lib')
 const { GenericValidator, NumberValidator } = require('../lib')
 
 describe('generic', () => {
@@ -32,12 +32,12 @@ describe('generic', () => {
           .message('It is not decent to ask a woman about her age 8)'),
     })
 
+    await schema.assert({ name: 'Tolya', gender: 'm', age: 41 })
+
     await assert.rejects(
         schema.assert({ name: 'john', gender: 'f', age: 38 }),
         /It is not decent to ask a woman about her age 8\)/,
     )
-
-    await forbidden(false).isValid({})
   })
 
   it('isValid', async () => {
