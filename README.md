@@ -228,8 +228,10 @@ Method takes flag `isForbidden` so you can disable such check on the fly.
           .message('It is not decent to ask a woman about her age 8)'),
     })
 
-
-await schema.assert({ name: 'Zina', gender: 'f', age: 38 }) // It is not decent to ask a woman about her age 8)
+await schema.assert({ name: 'Tolya', gender: 'm', age: 41 }) 
+// ok
+await schema.assert({ name: 'Zina', gender: 'f', age: 38 }) 
+// throws error with message => It is not decent to ask a woman about her age 8)
 ```
 
 #### `validator.message(message?: string | function(path: string, value: any, key: string|void): string): GenericValidator`
