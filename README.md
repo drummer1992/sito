@@ -500,15 +500,9 @@ Define an array validator.
 array()
 ```
 
-```js
-await array().assert({}) // throws error with message => payload should be type of array
-```
-
-
 ### `array.strict(isStrict?: boolean): ArrayValidator`
 
 A `strict` method makes the schema strict or no, it means that each attribute that is not defined in the schema will be rejected.
-
 
 ```js
 const schema = array([string().required()]).strict()
