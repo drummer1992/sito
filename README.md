@@ -216,17 +216,17 @@ await schema.assert('sito') // ok
 Method takes flag `isForbidden` so you can disable such check on the fly.
 
 ```js
-  const MALE = 'm'
-  const FEMALE = 'f'
+const MALE = 'm'
+const FEMALE = 'f'
 
-    const schema = object({
-      name: string(),
-      gender: oneOf([FEMALE, MALE]),
-      age: (value, key, obj) => number()
-          .min(18)
-          .forbidden(obj.gender === FEMALE)
-          .message('It is not decent to ask a woman about her age 8)'),
-    })
+const schema = object({
+  name: string(),
+  gender: oneOf([FEMALE, MALE]),
+  age: (value, key, obj) => number()
+      .min(18)
+      .forbidden(obj.gender === FEMALE)
+      .message('It is not decent to ask a woman about her age 8)'),
+})
 
 await schema.assert({ name: 'Tolya', gender: 'm', age: 41 }) 
 // ok
@@ -259,17 +259,17 @@ await schema.assert({ foo: 5 }) // throws error with message => foo is not valid
 You can enrich validator with custom check using `check` method.
 
 ```js
-    const secret = 'mankivka'
+const secret = 'mankivka'
 
-    const schema = object({
-      secret: new GenericValidator().check({
-                    optional: false,
-                    message: 'secret is not valid',
-                    validate: value => value === secret,
-                  })
-    })
+const schema = object({
+  secret: new GenericValidator().check({
+                optional: false,
+                message: 'secret is not valid',
+                validate: value => value === secret,
+              })
+})
 
-    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
+await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
 ```
 
 ### `check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`
@@ -277,17 +277,17 @@ You can enrich validator with custom check using `check` method.
 Also, you can create a generic validator with a custom check using the `check` factory.
 
 ```js
-    const secret = 'mankivka'
+const secret = 'mankivka'
 
-    const schema = object({
-      secret: check({
-                    optional: false,
-                    message: path => `${path} is not valid`,
-                    validate: value => value === secret,
-              })
-    })
+const schema = object({
+  secret: check({
+                optional: false,
+                message: path => `${path} is not valid`,
+                validate: value => value === secret,
+          })
+})
 
-    await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
+await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
 ```
 
 - `message` - error message or function which returns error message
@@ -542,15 +542,15 @@ array((value, idx, array) => number())
 ``` 
 
 ```js
-    const fnSchema = array(
-        (value, idx) => number().forbidden(idx === 100),
-    )
+const fnSchema = array(
+    (value, idx) => number().forbidden(idx === 100),
+)
 
-    assert.strictEqual(await fnSchema.isValid([1]), true)
+assert.strictEqual(await fnSchema.isValid([1]), true)
 
-    const numbersList = [...Array(100), 5].map(() => Math.random())
+const numbersList = [...Array(100), 5].map(() => Math.random())
 
-    await fnSchema.assert(numbersList) // throws error with message => [100] is forbidden attribute
+await fnSchema.assert(numbersList) // throws error with message => [100] is forbidden attribute
 ```
 
 ### `array.shape(arr: Array): ArrayValidator`
@@ -652,12 +652,12 @@ object((value, key, object) => number())
 
 Example of use case.
 ```js
-    const schema = object(
-      object({ name: string() })
-    )
+const schema = object(
+  object({ name: string() })
+)
 
-    await schema.assert({
-      foo: { name: 'john' },
-      bar: { name: 'doe' },
-    }) // ok
+await schema.assert({
+  foo: { name: 'john' },
+  bar: { name: 'doe' },
+}) // ok
 ```
