@@ -598,6 +598,24 @@ object({
 })
 ```
 
+#### `object.of(itemValidator: GenericValidator): ObjectValidator`
+
+You can also pass a validator to the object constructor.
+
+```js
+object().of(number())
+// or
+object(number())
+```
+
+It accepts function as well, which should return instance of GenericValidator.
+
+```js
+object().of((value, key, object) => number())
+// or
+object((value, key, object) => number())
+``` 
+
 ```js
 const ALLOWED_MUSICIANS = ['drums', 'bass', 'piano']
 
@@ -631,24 +649,6 @@ const musiciansMap = {
 
 await fnSchema.assert(musiciansMap) // throws error with message => voice is not needed
 ```
-
-#### `object.of(itemValidator: GenericValidator): ObjectValidator`
-
-You can also pass a validator to the object constructor.
-
-```js
-object().of(number())
-// or
-object(number())
-```
-
-It accepts function as well, which should return instance of GenericValidator.
-
-```js
-object().of((value, key, object) => number())
-// or
-object((value, key, object) => number())
-``` 
 
 Example of use case.
 ```js
