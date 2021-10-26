@@ -383,10 +383,6 @@ Define a boolean validator.
 boolean()
 ```
 
-```js
-await boolean().isValid(true) // => true
-```
-
 ### oneOf
 
 Define a oneOf validator.
@@ -439,10 +435,6 @@ Define a string validator.
 string()
 ```
 
-```js
-await string().assert('sito') // ok
-```
-
 #### `string.length(limit: number): StringValidator`
 
 Set the expected length for the string.
@@ -470,10 +462,6 @@ Define a number validator.
 
 ```js
 number()
-```
-
-```js
-await number().isValid(10) // => true
 ```
 
 #### `number.min(limit: number): NumberValidator`
