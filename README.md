@@ -114,12 +114,12 @@ import {
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
   - [ArrayValidator|array](#array)
     - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictitemvalidator-genericvalidator-arrayvalidator)
-    - [`array.of(itemValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
+    - [`array.of(itemValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
   - [ObjectValidator|object](#object)
     - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictitemvalidator-genericvalidator-objectvalidator)
-    - [`object.of(itemValidator: GenericValidator): ObjectValidator`](#objectofitemvalidator-genericvalidator-objectvalidator)
     - [`object.shape(obj: Array): ObjectValidator`](#objectshapeobj-object-objectvalidator)
+    - [`object.of(itemValidator: GenericValidator): ObjectValidator`](#objectofitemvalidator-genericvalidator-objectvalidator)
 
 #### `ValidationError(message: string, value: any, path: string, key: string)`
 
@@ -516,7 +516,19 @@ const schema = array([string().required()]).strict()
 await schema.assert(['foo', 'bar']) // throws error with message => [1] is forbidden attribute
 ```
 
+### `array.shape(arr: Array): ArrayValidator`
+
+You can define the shape for an array.
+
+```js
+array().shape([number()])
+// or
+array([number()])
+```
+
 #### `array.of(iremValidator: GenericValidator): ArrayValidator`
+
+You are able to define validator for each element of an array.
 
 ```js
 const schema = array().of(string().min(2))
@@ -553,16 +565,6 @@ const numbersList = [...Array(100), 5].map(() => Math.random())
 await fnSchema.assert(numbersList) // throws error with message => [100] is forbidden attribute
 ```
 
-### `array.shape(arr: Array): ArrayValidator`
-
-You can also define shape for the array validator.
-
-```js
-array().shape([number()])
-// or
-array([number()])
-```
-
 
 ### object
 
@@ -586,7 +588,7 @@ await schema.assert({ foo: 'bar', baz: 42 }) // throws error with message => baz
 
 #### `object.shape(obj: object): ObjectValidator`
 
-You can also pass a shape to the object constructor.
+You can define the shape of an object.
 
 ```js
 object().shape({
