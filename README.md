@@ -525,12 +525,32 @@ await schema.isValid(['ab', 'abc']) // => true
 await schema.isValid(['ab', 'a']) // => false
 ```
 
-You can also pass a subtype schema to the array constructor.
+You can also pass some validator to the array constructor.
 
 ```js
 array().of(number())
 // or
 array(number())
+``` 
+
+It accepts function as well, which should return instance of GenericValidator.
+
+```js
+array().of((value, idx, array) => number())
+// or
+array((value, idx, array) => number())
+``` 
+
+```js
+    const fnSchema = array(
+        (value, idx) => number().forbidden(idx === 100),
+    )
+
+    assert.strictEqual(await fnSchema.isValid([1]), true)
+
+    const numbersList = [...Array(100), 5].map(() => Math.random())
+
+    await fnSchema.assert(numbersList) // throws error with message => [100] is forbidden attribute
 ```
 
 ### `array.shape(arr: Array): ArrayValidator`
@@ -578,6 +598,40 @@ object({
 })
 ```
 
+```js
+const ALLOWED_MUSICIANS = ['drums', 'bass', 'piano']
+
+const fnSchema = object(
+    (value, key) => object({
+      name: string().required().min(2).max(35),
+      level: number().min(0).max(10),
+    })
+        .forbidden(!ALLOWED_MUSICIANS.includes(key))
+        .message(`${key} is not needed`),
+)
+
+const musiciansMap = {
+  bass: {
+    name: 'Valera',
+    level: 10,
+  },
+  drums: {
+    name: 'Andrii',
+    level: 9,
+  },
+  piano: {
+    name: 'Victor',
+    level: 10,
+  },
+  voice: {
+    name: 'Olga',
+    level: 10,
+  },
+}
+
+await fnSchema.assert(musiciansMap) // throws error with message => voice is not needed
+```
+
 #### `object.of(itemValidator: GenericValidator): ObjectValidator`
 
 You can also pass a validator to the object constructor.
@@ -587,6 +641,14 @@ object().of(number())
 // or
 object(number())
 ```
+
+It accepts function as well, which should return instance of GenericValidator.
+
+```js
+object().of((value, key, object) => number())
+// or
+object((value, key, object) => number())
+``` 
 
 Example of use case.
 ```js
