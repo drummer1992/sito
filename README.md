@@ -608,6 +608,17 @@ object().of(number())
 object(number())
 ```
 
+```js
+const schema = object(
+  object({ name: string() })
+)
+
+await schema.assert({
+  foo: { name: 'john' },
+  bar: { name: 'doe' },
+}) // ok
+```
+
 It accepts function as well, which should return instance of GenericValidator.
 
 ```js
@@ -648,16 +659,4 @@ const musiciansMap = {
 }
 
 await fnSchema.assert(musiciansMap) // throws error with message => voice is not needed
-```
-
-Example of use case.
-```js
-const schema = object(
-  object({ name: string() })
-)
-
-await schema.assert({
-  foo: { name: 'john' },
-  bar: { name: 'doe' },
-}) // ok
 ```
