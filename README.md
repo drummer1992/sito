@@ -113,13 +113,13 @@ import {
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
   - [ArrayValidator|array](#array)
-    - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictitemvalidator-genericvalidator-arrayvalidator)
+    - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictshapeValidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
-    - [`array.of(itemValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
+    - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
   - [ObjectValidator|object](#object)
-    - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictitemvalidator-genericvalidator-objectvalidator)
+    - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictshapeValidator-genericvalidator-objectvalidator)
     - [`object.shape(obj: Array): ObjectValidator`](#objectshapeobj-object-objectvalidator)
-    - [`object.of(itemValidator: GenericValidator): ObjectValidator`](#objectofitemvalidator-genericvalidator-objectvalidator)
+    - [`object.of(shapeValidator: GenericValidator): ObjectValidator`](#objectofshapeValidator-genericvalidator-objectvalidator)
 
 #### `ValidationError(message: string, value: any, path: string, key: string)`
 
@@ -582,7 +582,7 @@ object({
 })
 ```
 
-#### `object.of(itemValidator: GenericValidator): ObjectValidator`
+#### `object.of(shapeValidator: GenericValidator): ObjectValidator`
 
 You can also pass a validator to the object constructor.
 
