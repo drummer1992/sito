@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, number, string } = require('../lib')
+const { object, number, string, exists } = require('../lib')
 
 describe('object', () => {
   it('strict', () => {
@@ -10,49 +10,6 @@ describe('object', () => {
         schema.assert({ foo: 'bar', baz: 42 }),
         /baz is forbidden attribute/,
     )
-  })
-
-  it('of', async () => {
-    const schema = object(
-        object({ name: string() }),
-    )
-
-    await assert.rejects(
-        schema.assert({ foo: { name: 'john' }, bar: { name: 2 } }),
-        /bar.name should be type of string/,
-    )
-
-    const ALLOWED_MUSICIANS = ['drums', 'bass', 'piano']
-
-    const fnSchema = object(
-        (value, key) => object({
-          name: string().required().min(2).max(35),
-          level: number().min(0).max(10),
-        })
-            .forbidden(!ALLOWED_MUSICIANS.includes(key))
-            .message(`${key} is not needed`),
-    )
-
-    const musiciansMap = {
-      bass: {
-        name: 'Valera',
-        level: 10,
-      },
-      drums: {
-        name: 'Andrii',
-        level: 9,
-      },
-      piano: {
-        name: 'Victor',
-        level: 10,
-      },
-      voice: {
-        name: 'Olga',
-        level: 10,
-      },
-    }
-
-    await assert.rejects(fnSchema.assert(musiciansMap), /voice is not needed/)
   })
 
   it('check type', () => {
@@ -102,7 +59,7 @@ describe('object', () => {
     })
   })
 
-  describe('map', () => {
+  describe('of', () => {
     const schema = object(
         object({
           name: string().required(),
@@ -114,7 +71,7 @@ describe('object', () => {
         .required()
         .notEmpty()
 
-    it('smoke', async () => {
+    it('schema', async () => {
       await assert.rejects(schema.assert({ id1: '' }), /id1 should be type of object/)
       await assert.rejects(schema.assert({ id1: { foo: '' } }), /id1\.name is required/)
       await assert.rejects(schema.assert({ id1: { name: 'Andrii' } }), /id1\.age is required/)
@@ -127,6 +84,83 @@ describe('object', () => {
       await schema.assert({
         id1: { name: 'Andrii', age: 28 },
         id2: { name: 'Max', age: 29 },
+      })
+    })
+
+    it('fnSchema', async () => {
+      const ALLOWED_MUSICIANS = ['drums', 'bass', 'piano']
+
+      const fnSchema = object(
+          (value, key) => object({
+            name: string().required().min(2).max(35),
+            level: number().min(0).max(10),
+          })
+              .forbidden(!ALLOWED_MUSICIANS.includes(key))
+              .message(`${key} is not needed`),
+      )
+
+      const musiciansMap = {
+        bass: {
+          name: 'Valera',
+          level: 10,
+        },
+        drums: {
+          name: 'Andrii',
+          level: 9,
+        },
+        piano: {
+          name: 'Victor',
+          level: 10,
+        },
+        voice: {
+          name: 'Olga',
+          level: 10,
+        },
+      }
+
+      await assert.rejects(fnSchema.assert(musiciansMap), /voice is not needed/)
+    })
+  })
+
+  describe('exists', () => {
+    const node = () => object({
+      value: exists(),
+      next: value => value ? node() : exists(true),
+    })
+        .strict()
+
+    it('should validate linked list', async () => {
+      await assert.rejects(node().assert({
+        value: 'foo',
+        next: {
+          value: 'bar',
+          next: {
+            value: 'baz',
+            next: {
+              value: 'almost',
+              next: {
+                value: 'end',
+              },
+            },
+          },
+        },
+      }), /next\.next\.next\.next\.next is not defined/)
+
+      await assert.rejects(node().assert({
+        value: 'foo',
+        next: {
+          value: 'bar',
+          passenger: 'ops',
+          next: null,
+        },
+      }), /next.passenger is forbidden attribute/)
+
+      await node().assert({
+        value: 'foo',
+        next: {
+          value: 'bar',
+          next: null,
+        },
       })
     })
   })

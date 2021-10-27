@@ -61,6 +61,7 @@ import {
   required,
   boolean,
   forbidden,
+  exists,
   oneOf,
   string,
   number,
@@ -93,16 +94,16 @@ import {
     - [`validator.assertBulk(payload: any): Promise<void>`](#validatorassertbulkpayload-any-promisevoid)
     - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
-    - [`validator.required(isRequired?: boolean): GenericValidator`](#validatorrequiredisrequired-boolean-genericvalidator)
-    - [`validator.forbidden(isForbidden?: boolean): GenericValidator`](#validatorforbiddenisforbidden-boolean-genericvalidator)
+    - [`validator.required(enabled?: boolean): GenericValidator`](#validatorrequiredenabled-boolean-genericvalidator)
+    - [`validator.forbidden(enabled?: boolean): GenericValidator`](#validatorforbiddenenabled-boolean-genericvalidator)
     - [`validator.message(message: string | function(path: string, value: any, key: string|void): string): GenericValidator`](#validatormessagemessage-string--functionpath-string-value-any-key-stringvoid-string-genericvalidator)
     - [`validator.combine(validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
-    - [`validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
-    - [`check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false })`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
+    - [`validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-key-string-shape-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
+    - [`check({ message: string | function(path: string, value: any, key: string): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`](#check-message-string--functionpath-string-value-any-key-string-stringstring-validate-functionvalue-any-key-string-shape-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
     - [`boolean()`](#boolean)
     - [`oneOf(values: any[])`](#oneof)
-    - [`required(isRequired?: true)`](#required)
-    - [`forbidden(isForbidden?: true)`](#forbidden)
+    - [`required(enabled?: true)`](#required)
+    - [`forbidden(enabled?: true)`](#forbidden)
   - [StringValidator|string](#string)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
     - [`string.min(limit: number): StringValidator`](#stringminlimit-number-stringvalidator)
@@ -201,9 +202,9 @@ await schema.validate({ foo: 'bar', baz: 42 })
 await array([number()]).isValid(['ops']) // false 
 ```
 
-#### `validator.required(isRequired?: boolean): GenericValidator`
+#### `validator.required(enabled?: boolean): GenericValidator`
 
-Method takes flag `isRequired` so you can disable such check on the fly.
+Method takes flag `enabled` so you can disable such check on the fly.
 
 ```js
 const schema = string().required()
@@ -211,9 +212,9 @@ const schema = string().required()
 await schema.assert('sito') // ok
 ```
 
-#### `validator.forbidden(isForbidden?: boolean): GenericValidator`
+#### `validator.forbidden(enabled?: boolean): GenericValidator`
 
-Method takes flag `isForbidden` so you can disable such check on the fly.
+Method takes flag `enabled` so you can disable such check on the fly.
 
 ```js
 const MALE = 'm'
@@ -254,7 +255,7 @@ const schema = object({
 await schema.assert({ foo: 5 }) // throws error with message => foo is not valid
 ```
 
-### `validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`
+### ``validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator``
 
 You can enrich validator with custom check using `check` method.
 
@@ -272,7 +273,7 @@ const schema = object({
 await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
 ```
 
-### `check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`
+### `check({ message: string | function(path: string, value: any, key: string): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`
 
 Also, you can create a generic validator with a custom check using the `check` factory.
 
@@ -404,7 +405,7 @@ string().required()
 required()
 ```
 
-Method takes flag `isRequired` so you can disable such check on the fly.
+Method takes flag `enabled` so you can disable such check on the fly.
 
 ```js
 await required(false).isValid(null) // => true
@@ -420,7 +421,7 @@ string().forbidden()
 forbidden()
 ```
 
-Method takes flag `isForbidden` so you can disable such check on the fly.
+Method takes flag `enabled` so you can disable such check on the fly.
 
 ```js
 await forbidden(false).isValid({}) // => true
