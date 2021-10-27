@@ -12,7 +12,8 @@ describe('array', () => {
   it('of', async () => {
     const schema = array().of(string().min(2))
 
-    assert.strictEqual(await schema.isValid(['ab', 'abc']), true)
+    await schema.assert(['ab', 'abc'])
+
     assert.strictEqual(await schema.isValid(['ab', 'a']), false)
 
     const fnSchema = array(
