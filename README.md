@@ -115,7 +115,7 @@ import {
   - [ArrayValidator|array](#array)
     - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictshapeValidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
-    - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofiremvalidator-genericvalidator-arrayvalidator)
+    - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofshapeValidator-genericvalidator-arrayvalidator)
   - [ObjectValidator|object](#object)
     - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictshapeValidator-genericvalidator-objectvalidator)
     - [`object.shape(obj: Array): ObjectValidator`](#objectshapeobj-object-objectvalidator)
@@ -508,7 +508,7 @@ array().shape([number()])
 array([number()])
 ```
 
-#### `array.of(iremValidator: GenericValidator): ArrayValidator`
+#### `array.of(shapeValidator: GenericValidator): ArrayValidator`
 
 You are able to define validator for each element of an array.
 
