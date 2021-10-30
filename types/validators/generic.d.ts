@@ -19,13 +19,13 @@ declare class GenericValidator {
 
     check(check: CheckDto): this
 
-    combine(...validators: this[]): this
+    combine(...validators: this[]): GenericValidator
 
     required(enabled?: boolean): this
 
     forbidden(enabled?: boolean): this
 
-    message(message: Message): this
+    message(message: string | Message): this
 }
 
 export default GenericValidator
