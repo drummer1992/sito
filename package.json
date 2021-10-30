@@ -3,6 +3,7 @@
   "version": "1.2.4",
   "description": "This is a simple schema validator built without dependencies",
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "test": "mocha",
     "lint": "eslint lib test --fix"
