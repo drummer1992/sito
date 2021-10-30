@@ -15,7 +15,8 @@ describe('string', () => {
     assert.strictEqual(await string().pattern(/(foo|bar)/).isValid('baz'), false)
 
     const validationSchema = object({
-      email: string().required().pattern(EMAIL_REGEX),
+      email: string().required().pattern(EMAIL_REGEX)
+          .combine(),
       displayName: string(),
       password: string(),
     })

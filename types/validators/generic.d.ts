@@ -19,7 +19,7 @@ declare class GenericValidator {
 
     check(check: CheckDto): this
 
-    combine(...validators: this[]): GenericValidator
+    combine(...validators: GenericValidator[]): this
 
     required(enabled?: boolean): this
 
