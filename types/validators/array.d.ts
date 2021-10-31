@@ -2,7 +2,7 @@ import SchemaValidator, {ValidatorCreator} from "./schema";
 import GenericValidator from "./generic";
 
 export interface ArrayShape {
-    [idx: number]: GenericValidator | ValidatorCreator
+    [index: number]: GenericValidator | ValidatorCreator
 }
 
 declare class ArrayValidator extends SchemaValidator {
