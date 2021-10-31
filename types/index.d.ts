@@ -15,20 +15,32 @@ export { default as NumberValidator } from './validators/number';
 export { default as ObjectValidator } from './validators/object';
 export { default as ArrayValidator } from './validators/array';
 
-export function check(check: CheckDto): GenericValidator
+declare namespace Sito {
+    function check(check: CheckDto): GenericValidator
 
-export function required(enabled?: boolean): GenericValidator
+    function required(enabled?: boolean): GenericValidator
 
-export function forbidden(enabled?: boolean): GenericValidator
+    function forbidden(enabled?: boolean): GenericValidator
 
-export function exists(enabled?: boolean): GenericValidator
+    function exists(enabled?: boolean): GenericValidator
 
-export function oneOf(values: any[]): GenericValidator
+    function oneOf(values: any[]): GenericValidator
 
-export function string(): StringValidator
+    function string(): StringValidator
 
-export function number(): NumberValidator
+    function number(): NumberValidator
 
-export function object(value: ObjectShape | ValidatorCreator | GenericValidator): ObjectValidator
+    function object(shape: ObjectShape): ObjectValidator
 
-export function array(value: ArrayShape | ValidatorCreator | GenericValidator): ArrayValidator
+    function object(validatorCreator: ValidatorCreator): ObjectValidator
+
+    function object(validator: GenericValidator): ObjectValidator
+
+    function array(shape: ArrayShape): ArrayValidator
+
+    function array(validatorCreator: ValidatorCreator): ArrayValidator
+
+    function array(validator: GenericValidator): ArrayValidator
+}
+
+export default Sito
