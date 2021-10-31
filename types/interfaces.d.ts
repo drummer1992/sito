@@ -1,17 +1,20 @@
 export interface Message {
-    (path: string, value: any, key: string | void): string;
+    (path: string, value: any, key: string | void): string | Promise<string>;
 }
 
 export interface Validate {
-    (value: any, key: string | number | void, shape: object | [] | void): boolean;
+    (value: any, key: string | number | void, shape: object | [] | void): boolean | Promise<boolean>;
 }
 
-interface CheckDto {
-    readonly message: Message | string
-    readonly validate: Validate
+export type CheckDto = {
+    message: Message | string
+    validate: Validate
+    common?: boolean
+    optional?: boolean
+    enabled?: boolean
 }
 
-interface ValidationParams {
+export type ValidationParams = {
     key: string,
     value: any,
     payload: any,
