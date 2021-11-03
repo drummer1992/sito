@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, number, string, boolean, oneOf, required, check } = require('../lib')
+const { object, array, number, string, boolean, oneOf, required, check, combine } = require('../lib')
 const { GenericValidator, NumberValidator } = require('../lib')
 
 describe('generic', () => {
@@ -119,17 +119,33 @@ describe('generic', () => {
     return assert.rejects(number().safe().assert(Number.MAX_SAFE_INTEGER), /payload is not safe/)
   })
 
-  it('combine', () => {
-    const database = ['id1', 'id2']
+  describe('combine', () => {
+    it('method', () => {
+      const database = ['id1', 'id2']
 
-    const userIdSchema = string().max(50).required()
-        .combine(
-            check({
-              validate: value => database.includes(value),
-              message: (path, value) => `user not found by id ${value}`,
-            }),
-        )
+      const userIdSchema = string().max(50).required()
+          .combine(
+              check({
+                validate: value => database.includes(value),
+                message: (path, value) => `user not found by id ${value}`,
+              }),
+          )
 
-    return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
+      return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
+    })
+
+    it('factory', () => {
+      const database = ['id1', 'id2']
+
+      const userIdSchema = combine(
+          string().max(50).required(),
+          check({
+            validate: value => database.includes(value),
+            message: (path, value) => `user not found by id ${value}`,
+          }),
+      )
+
+      return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
+    })
   })
 })

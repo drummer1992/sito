@@ -17,6 +17,8 @@ export {default as ArrayValidator} from './validators/array';
 
 export function check(check: CheckDto): GenericValidator
 
+export function combine(...validators: GenericValidator[]): GenericValidator
+
 export function required(enabled?: boolean): GenericValidator
 
 export function forbidden(enabled?: boolean): GenericValidator

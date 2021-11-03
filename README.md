@@ -68,6 +68,7 @@ import {
   object,
   array,
   check,
+  combine,
 } from 'sito'
 ```
 
@@ -89,58 +90,60 @@ import {
 - `Sito`
   - [`ValidationError(message: string, value: any, path: string, key: string)`](#validationerrormessage-string-value-any-path-string-key-string)
   - [`BulkValidationError(errors: ValidationError[])`](#bulkvalidationerrorerrors-validationerror)
-  - [GenericValidator](#generic)
+  - [GenericValidator](#genericvalidator)
     - [`validator.assert(payload: any): Promise<void>`](#validatorassertpayload-any-promisevoid)
     - [`validator.assertBulk(payload: any): Promise<void>`](#validatorassertbulkpayload-any-promisevoid)
     - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(enabled?: boolean): GenericValidator`](#validatorrequiredenabled-boolean-genericvalidator)
     - [`validator.forbidden(enabled?: boolean): GenericValidator`](#validatorforbiddenenabled-boolean-genericvalidator)
-    - [`validator.message(message: string | function(path: string, value: any, key: string|void): string): GenericValidator`](#validatormessagemessage-string--functionpath-string-value-any-key-stringvoid-string-genericvalidator)
-    - [`validator.combine(validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
-    - [`validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`](#validatorcheck-message-string--functionpath-string-value-any-key-stringvoid-stringstring-validate-functionvalue-any-key-string-shape-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
-    - [`check({ message: string | function(path: string, value: any, key: string): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`](#check-message-string--functionpath-string-value-any-key-string-stringstring-validate-functionvalue-any-key-string-shape-any-booleanpromiseboolean-optional-true-common-false--genericvalidator)
+    - [`validator.message(message: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
+    - [`validator.combine(...validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
+    - [`validator.check({ message: string | function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#validatorcheck-message-string--function-validate-function-optional-boolean-common-boolean--genericvalidator)
+    - [`combine(...validators: GenericValidator[]): GenericValidator`](#combinevalidators-genericvalidator-genericvalidator)
+    - [`check({ message: string|function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#check-message-stringfunction-validate-function-optional-boolean-common-boolean--genericvalidator)
     - [`boolean()`](#boolean)
-    - [`oneOf(values: any[])`](#oneof)
-    - [`required(enabled?: true)`](#required)
-    - [`forbidden(enabled?: true)`](#forbidden)
-  - [StringValidator|string](#string)
+    - [`oneOf(values: any[])`](#oneofvalues-any)
+    - [`required(enabled?: boolean)`](#requiredenabled-boolean)
+    - [`forbidden(enabled?: boolean)`](#forbiddenenabled-boolean)
+  - [StringValidator|string](#stringvalidator)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
     - [`string.min(limit: number): StringValidator`](#stringminlimit-number-stringvalidator)
     - [`string.max(limit: number): StringValidator`](#stringmaxlimit-number-stringvalidator)
-  - [NumberValidator|number](#number)
+  - [NumberValidator|number](#numbervalidator)
     - [`number.min(limit: number): NumberValidator`](#numberminlimit-number-numbervalidator)
     - [`number.max(limit: number): NumberValidator`](#numbermaxlimit-number-numbervalidator)
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
-  - [ArrayValidator|array](#array)
+  - [ArrayValidator|array](#arrayvalidator)
     - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictshapeValidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
     - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofshapeValidator-genericvalidator-arrayvalidator)
-  - [ObjectValidator|object](#object)
-    - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictshapeValidator-genericvalidator-objectvalidator)
-    - [`object.shape(obj: Array): ObjectValidator`](#objectshapeobj-object-objectvalidator)
-    - [`object.of(shapeValidator: GenericValidator): ObjectValidator`](#objectofshapeValidator-genericvalidator-objectvalidator)
+  - [ObjectValidator|object](#objectvalidator)
+    - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictisstrict-boolean-objectvalidator)
+    - [`object.shape(obj: object): ObjectValidator`](#objectshapeobj-object-objectvalidator)
+    - [`object.of(shapeValidator: GenericValidator): ObjectValidator`](#objectofshapevalidator-genericvalidator-objectvalidator)
 
 #### `ValidationError(message: string, value: any, path: string, key: string)`
 
 Thrown on failed validations, with the following properties
 
-- `name`: "ValidationError"
-- `path`: a string, indicates where the error thrown. `path` is equal to `payload` at the root level.
-- `key`: a string, indicates property key.
-- `message`: error message
-- `value`: checked value
+- `name`: `ValidationError`
+- `path`: `string`, indicates where the error thrown. `path` is equal to `payload` at the root level.
+- `key`: `string`, indicates property key.
+- `message`: `string`,  error message
+- `value`: `any`, checked value
 
 #### `BulkValidationError(errors: ValidationError[])`
 
 Thrown on failed validations, with the following properties
 
-- `name`: "BulkValidationError"
-- `errors`: An array of ValidationError instances
-- `message`: "Bulk Validation Failed"
+- `name`: `BulkValidationError`
+- `errors`:  `ValidationError[]`
+- `message`: `string`
 
-#### `generic`
+#### GenericValidator
+
 ### `validator.assert(payload: any): Promise<void>`
 
 ```js
@@ -235,7 +238,7 @@ await schema.assert({ name: 'Zina', gender: 'f', age: 38 })
 // throws error with message => It is not decent to ask a woman about her age 8)
 ```
 
-#### `validator.message(message?: string | function(path: string, value: any, key: string|void): string): GenericValidator`
+#### `validator.message(message: string | function): GenericValidator`
 
 Set custom `message`:
 
@@ -255,7 +258,7 @@ const schema = object({
 await schema.assert({ foo: 5 }) // throws error with message => foo is not valid
 ```
 
-### ``validator.check({ message: string | function(path: string, value: any, key: string|void): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator``
+### `validator.check({ message: string | function, validate: function, optional?: boolean, common?: boolean }): GenericValidator` 
 
 You can enrich validator with custom check using `check` method.
 
@@ -273,7 +276,15 @@ const schema = object({
 await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
 ```
 
-### `check({ message: string | function(path: string, value: any, key: string): string|string, validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>, optional?: true, common?: false }): GenericValidator`
+- `message`: `string | function(path: string, value: any, key: string|void): string|string`
+- `validate`: `validate: function(value: any, key: string, shape: any): boolean|Promise<boolean>`
+- `optional?:` `boolean`, default `true`
+- `enabled?:` `boolean`, default `true`
+- `common?:` `boolean`, default `false`
+
+A check marked as `common` forces the validator to run this check on all other checks of this validator.
+
+### `check({ message: string|function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`
 
 Also, you can create a generic validator with a custom check using the `check` factory.
 
@@ -290,12 +301,6 @@ const schema = object({
 
 await schema.assert({ secret: 'popivka' }) // throws error with message => secret is not valid
 ```
-
-- `message` - error message or function which returns error message
-- `validate` - the function which will be performed during validation
-- `optional`: each check is `optional` by default, it means that the validation won't perform if checked value is `undefined`.
-- `common`: forces the validator to run the check marked as `common` before other checks of this validator.
-This allows you not to write extra code for type checks in each `validate` function.
 
 ```js
 class DateValidator extends GenericValidator {
@@ -362,7 +367,7 @@ NumberValidator.expand({
 })
 ```
 
-### `validator.combine(validators: GenericValidator[]): GenericValidator`
+### `validator.combine(...validators: GenericValidator[]): GenericValidator`
 
 It might be useful if you need to merge validators
 
@@ -376,7 +381,21 @@ const userIdSchema = string().max(50).required()
     )
 ```
 
-### boolean
+### `combine(...validators: GenericValidator[]): GenericValidator`
+
+It is a factory function which generates instances of GenericValidator with provided validators
+
+```js
+const userIdSchema = combine(
+      string().max(50).required(),
+      check({
+          validate: value => User.exists({ where: { id: value } }),
+          message: (path, value) => `User not found by id ${value}`,
+        })
+    )
+```
+
+### `boolean()`
 
 Define a boolean validator.
 
@@ -384,7 +403,7 @@ Define a boolean validator.
 boolean()
 ```
 
-### oneOf
+### `oneOf(values: any[])`
 
 Define a oneOf validator.
 
@@ -395,7 +414,7 @@ await validator.isValid(1) // => true
 await validator.isValid(3) // => false
 ```
 
-### required
+### `required(enabled?: boolean)`
 
 Define a required validator.
 
@@ -411,7 +430,7 @@ Method takes flag `enabled` so you can disable such check on the fly.
 await required(false).isValid(null) // => true
 ```
 
-### forbidden
+### `forbidden(enabled?: boolean)`
 
 Define a forbidden validator.
 
@@ -428,7 +447,7 @@ await forbidden(false).isValid({}) // => true
 ```
 
 
-### string
+### StringValidator
 
 Define a string validator.
 
@@ -457,7 +476,7 @@ await string().pattern(/(foo|bar)/).isValid('foo') // => true
 await string().pattern(/(foo|bar)/).isValid('baz') // => false
 ```
 
-### number
+### NumberValidator
 
 Define a number validator.
 
@@ -481,7 +500,7 @@ Value must be a positive number.
 
 Value must be a negative number.
 
-### array
+### ArrayValidator
 
 Define an array validator.
 
@@ -549,7 +568,7 @@ await fnSchema.assert(numbersList) // throws error with message => [100] is forb
 ```
 
 
-### object
+### ObjectValidator
 
 Define object validator.
 
