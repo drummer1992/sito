@@ -2,6 +2,7 @@
 
 const { GenericValidator, object, string, number } = require('../lib')
 const interceptor = require('../lib/interceptor')
+const validate = require('../lib/validate')
 
 GenericValidator.expand({
   asWarning() {
@@ -12,6 +13,10 @@ GenericValidator.expand({
 })
 
 interceptor.register((error, extra) => {
+  if (extra.prefix) {
+    error.message = `${extra.prefix} ${error.message}`
+  }
+
   if (extra.asWarning) {
     return console.warn(error)
   }
@@ -27,5 +32,16 @@ describe('interceptor', () => {
     }).required()
 
     await schema.assert({ name: 5, age: '23' })
+  })
+
+  it('prefix functionality', () => {
+    return assert.rejects(
+        validate({
+          payload: null,
+          validator: string().required(),
+          prefix: 'OOPS.',
+        }),
+        /OOPS\. payload should be type of string/,
+    )
   })
 })
