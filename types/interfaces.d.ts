@@ -6,6 +6,10 @@ export interface Validate {
     (value: any, key: string | number | void, shape: object | [] | void): boolean | Promise<boolean>;
 }
 
+export interface Extra {
+    [key: string]: any;
+}
+
 export type CheckDto = {
     message: Message | string
     validate: Validate

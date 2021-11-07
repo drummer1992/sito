@@ -4,8 +4,9 @@ import {ValidationError} from "../errors";
 declare class Check {
     constructor(checkDto: CheckDto)
 
-    readonly message: Message
-    readonly validate: Validate
+    message: Message
+
+    validate: Validate
 
     execute(params: ValidationParams): Promise<ValidationError>
 }
