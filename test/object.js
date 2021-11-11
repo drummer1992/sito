@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, number, string, exists } = require('../lib')
+const { object, number, string, exists, array, oneOf, boolean } = require('../lib')
 
 describe('object', () => {
   it('strict', () => {
@@ -162,6 +162,41 @@ describe('object', () => {
           next: null,
         },
       })
+    })
+  })
+
+  describe('issues', () => {
+    const validationSchema = object({
+      fieldOne  : boolean().required(),
+      nestedObj1: object({
+        fieldTwo  : string(),
+        nestedObj2: object({
+          fieldThree: number().required(),
+          nestedObj3: object({
+            fieldFour: string().max(2),
+            fieldFive: string().min(2),
+          }).required(),
+        }).required(),
+      }),
+      nestedArr : array(object({
+        nestedArrObj: object({
+          fieldSix: number().combine(oneOf([1, 2])).required(),
+        }).required(),
+      })).required(),
+      nestedArr2: array(
+          object({ fieldSeven: string().notEmpty().required() }).required(),
+      ),
+      fieldEight: string().message('custom message'),
+    }).required()
+
+    it('should validate nested array', () => {
+      return assert.rejects(
+          async () => await validationSchema.assert({
+            fieldOne : true,
+            nestedArr: [{ nestedArrObj: { fieldSix: 3 } }],
+          }),
+          /nestedArr\[0]\.nestedArrObj\.fieldSix should be one of \[1, 2]/,
+      )
     })
   })
 })
