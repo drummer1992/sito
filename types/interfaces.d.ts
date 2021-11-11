@@ -22,11 +22,11 @@ export type CheckDto = {
 }
 
 export type ValidationParams = {
-    readonly key: string,
-    readonly value: any,
-    readonly payload: any,
+    readonly key?: string,
+    readonly value?: any,
+    readonly payload?: any,
     readonly validator: GenericValidator
-    path: string | void,
-    bulk: boolean,
+    path?: string | void,
+    bulk?: boolean,
     [key: string]: any
 }
