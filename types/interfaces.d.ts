@@ -16,6 +16,7 @@ export type CheckDto = {
     common?: boolean
     optional?: boolean
     enabled?: boolean
+    [key: string]: any
 }
 
 export type ValidationParams = {
