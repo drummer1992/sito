@@ -1,4 +1,4 @@
-import {CheckDto, Extra} from "./interfaces";
+import {CheckDto, Extra, ValidationParams} from "./interfaces";
 import GenericValidator from "./validators/generic";
 import StringValidator from "./validators/string";
 import NumberValidator from "./validators/number";
@@ -46,7 +46,7 @@ declare function array(validatorCreator: ValidatorCreator): ArrayValidator
 
 declare function array(validator: GenericValidator): ArrayValidator
 
-export function validate(payload: any, options: Extra): Promise<ValidationError[]>
+export function validate(params: ValidationParams): Promise<ValidationError[]>
 
 export const interceptor: {
     register(interceptFn: (error: ValidationError, extra: Extra) => any): void

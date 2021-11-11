@@ -1,3 +1,5 @@
+import GenericValidator from "./validators/generic";
+
 export interface Message {
     (path: string, value: any, key: string | void): string | Promise<string>;
 }
@@ -20,9 +22,11 @@ export type CheckDto = {
 }
 
 export type ValidationParams = {
-    key: string,
-    value: any,
-    payload: any,
+    readonly key: string,
+    readonly value: any,
+    readonly payload: any,
+    readonly validator: GenericValidator
     path: string | void,
     bulk: boolean,
+    [key: string]: any
 }
