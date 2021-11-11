@@ -41,7 +41,7 @@ describe('interceptor', () => {
           validator: string().required(),
           prefix: 'OOPS.',
         }),
-        /OOPS\. payload should be type of string/,
+        /OOPS\. payload is required/,
     )
   })
 })
