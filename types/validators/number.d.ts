@@ -8,6 +8,8 @@ declare class NumberValidator extends GenericValidator {
     positive(): this
 
     negative(): this
+
+    strict(enabled: boolean): this
 }
 
 export default NumberValidator
