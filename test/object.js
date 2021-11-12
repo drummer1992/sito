@@ -3,13 +3,15 @@
 const { object, number, string, exists, array, oneOf, boolean } = require('../lib')
 
 describe('object', () => {
-  it('strict', () => {
-    const schema = object({ foo: string().required() }).strict()
+  it('strict', async () => {
+    const schema = object({ foo: string().required() }).required(false).strict()
 
-    return assert.rejects(
+    await assert.rejects(
         schema.assert({ foo: 'bar', baz: 42 }),
         /baz is forbidden attribute/,
     )
+
+    await schema.assert()
   })
 
   it('check type', () => {
@@ -167,9 +169,9 @@ describe('object', () => {
 
   describe('issues', () => {
     const validationSchema = object({
-      fieldOne  : boolean().required(),
+      fieldOne: boolean().required(),
       nestedObj1: object({
-        fieldTwo  : string(),
+        fieldTwo: string(),
         nestedObj2: object({
           fieldThree: number().required(),
           nestedObj3: object({
@@ -178,7 +180,7 @@ describe('object', () => {
           }).required(),
         }).required(),
       }),
-      nestedArr : array(object({
+      nestedArr: array(object({
         nestedArrObj: object({
           fieldSix: number().combine(oneOf([1, 2])).required(),
         }).required(),
@@ -192,7 +194,7 @@ describe('object', () => {
     it('should validate nested array', () => {
       return assert.rejects(
           async () => await validationSchema.assert({
-            fieldOne : true,
+            fieldOne: true,
             nestedArr: [{ nestedArrObj: { fieldSix: 3 } }],
           }),
           /nestedArr\[0]\.nestedArrObj\.fieldSix should be one of \[1, 2]/,
