@@ -6,18 +6,18 @@ const validate = require('../lib/validate')
 
 GenericValidator.expand({
   asWarning() {
-    this.checks.extra.asWarning = true
+    this.checks.extra.set('asWarning', true)
 
     return this
   },
 })
 
-interceptor.register((error, extra) => {
-  if (extra.prefix) {
-    error.message = `${extra.prefix} ${error.message}`
+interceptor.register((error, options) => {
+  if (options.prefix) {
+    error.message = `${options.prefix} ${error.message}`
   }
 
-  if (extra.asWarning) {
+  if (options.extra.get('asWarning')) {
     return console.warn(error)
   }
 

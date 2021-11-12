@@ -1,9 +1,10 @@
-import {CheckDto, Extra, ValidationParams} from "../interfaces";
+import {CheckDto, ValidationParams} from "../interfaces";
 import Check from "./check";
 import {ValidationError} from "../errors";
 
 declare class Checks {
-    extra: Extra
+    // @ts-ignore
+    extra: Map<any, any>
 
     execute(params: ValidationParams): Promise<ValidationError | never>
 

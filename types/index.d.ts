@@ -1,4 +1,4 @@
-import {CheckDto, Extra, ValidationParams} from "./interfaces";
+import {CheckDto, InterceptorOptions, ValidationParams} from "./interfaces";
 import GenericValidator from "./validators/generic";
 import StringValidator from "./validators/string";
 import NumberValidator from "./validators/number";
@@ -49,7 +49,7 @@ declare function array(validator: GenericValidator): ArrayValidator
 export function validate(params: ValidationParams): Promise<ValidationError[]>
 
 export const interceptor: {
-    register(interceptFn: (error: ValidationError, extra: Extra) => any): void
+    register(interceptFn: (error: ValidationError, options: InterceptorOptions) => any): void
 }
 
 export {object, array}

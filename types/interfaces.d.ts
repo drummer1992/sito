@@ -1,4 +1,5 @@
 import GenericValidator from "./validators/generic";
+import Check from "./checks/check";
 
 export interface Message {
     (path: string, value: any, key: string | void): string | Promise<string>;
@@ -6,10 +7,6 @@ export interface Message {
 
 export interface Validate {
     (value: any, key: string | number | void, shape: object | [] | void): boolean | Promise<boolean>;
-}
-
-export interface Extra {
-    [key: string]: any;
 }
 
 export type CheckDto = {
@@ -29,4 +26,10 @@ export type ValidationParams = {
     path?: string | void,
     bulk?: boolean,
     [key: string]: any
+}
+
+export interface InterceptorOptions extends ValidationParams {
+    // @ts-ignore
+    extra: Map<any, any>
+    check: Check
 }
