@@ -3,6 +3,15 @@
 Sito is a JavaScript lightweight schema validator built without any dependencies. 
 The API is heavily inspired by [Yup](https://github.com/jquense/yup).
 
+# Install
+
+```js
+npm install sito
+```
+
+Sito is a JavaScript lightweight schema validator built without any dependencies. 
+The API is heavily inspired by [Yup](https://github.com/jquense/yup).
+
 ## Usage
 
 Define a validator, validate the object, array or any scalar values.
@@ -115,6 +124,7 @@ import {
     - [`number.max(limit: number): NumberValidator`](#numbermaxlimit-number-numbervalidator)
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
+    - [`number.strict(isStrict?: boolean): NumberValidator`](#numberstrictisstrict-boolean-numbervalidator)
   - [ArrayValidator|array](#arrayvalidator)
     - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictshapeValidator-genericvalidator-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
@@ -499,6 +509,10 @@ Value must be a positive number.
 #### `number.negative(): NumberValidator`
 
 Value must be a negative number.
+
+#### `number.strict(isStrict?: boolean): NumberValidator`
+
+Force the validator to perform type checking
 
 ### ArrayValidator
 
