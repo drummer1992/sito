@@ -9,9 +9,6 @@ The API is heavily inspired by [Yup](https://github.com/jquense/yup).
 npm install sito
 ```
 
-Sito is a JavaScript lightweight schema validator built without any dependencies. 
-The API is heavily inspired by [Yup](https://github.com/jquense/yup).
-
 ## Usage
 
 Define a validator, validate the object, array or any scalar values.
