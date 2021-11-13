@@ -28,8 +28,7 @@ export type ValidationParams = {
     [key: string]: any
 }
 
-export interface InterceptorOptions extends ValidationParams {
-    // @ts-ignore
-    extra: Map<any, any>
+export interface InterceptorParams extends ValidationParams {
+    extra: { [key: string]: any }
     check: Check
 }

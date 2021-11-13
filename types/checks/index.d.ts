@@ -3,8 +3,7 @@ import Check from "./check";
 import {ValidationError} from "../errors";
 
 declare class Checks {
-    // @ts-ignore
-    extra: Map<any, any>
+    extra: { [key: string]: any }
 
     execute(params: ValidationParams): Promise<ValidationError | never>
 
