@@ -1,10 +1,7 @@
 import GenericValidator from "./generic";
 import {ObjectShape} from "./object";
 import {ArrayShape} from "./array";
-
-export interface ValidatorCreator {
-    (value: any, key: string | number | void, shape: any): GenericValidator
-}
+import {ValidatorCreator} from "../interfaces";
 
 declare class SchemaValidator extends GenericValidator {
     static create(data: ValidatorCreator | GenericValidator): SchemaValidator
@@ -14,6 +11,8 @@ declare class SchemaValidator extends GenericValidator {
     of(shapeValidator: ValidatorCreator | GenericValidator): this
 
     shape(shape: ObjectShape | ArrayShape): this
+
+    extends(shape: ObjectShape | ArrayShape | SchemaValidator): this
 }
 
 export default SchemaValidator

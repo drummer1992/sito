@@ -26,6 +26,24 @@ describe('object', () => {
     return assert.rejects(object().notEmpty().assert({}), /payload should be not empty object/)
   })
 
+  describe('extends', () => {
+    const basicSchema = object({ name: string().required() })
+    const hobbies = object({ hobbies: array(string().required()).required().notEmpty() })
+    const age = { age: number().required() }
+
+    const mergedSchema = basicSchema.extends(hobbies).extends(age).required()
+
+    it('smoke', async () => {
+      await assert.rejects(mergedSchema.assert(), /payload is required/)
+      await assert.rejects(mergedSchema.assert({}), /name is required/)
+      await assert.rejects(mergedSchema.assert({ name: 'foo' }), /hobbies is required/)
+      await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: '' }), /hobbies should be type of array/)
+      await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: [] }), /hobbies should be not empty array/)
+      await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: ['foo'] }), /age is required/)
+      await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: ['foo'], age: '5a' }), /age should be a number/)
+    })
+  })
+
   describe('nested validation', () => {
     const schema = object({
       foo: object({

@@ -9,6 +9,10 @@ export interface Validate {
     (value: any, key: string | number | void, shape: object | [] | void): boolean | Promise<boolean>;
 }
 
+export interface ValidatorCreator {
+    (value: any, key: string | number | void, shape: any): GenericValidator
+}
+
 export type CheckDto = {
     message: Message | string
     validate: Validate
@@ -24,7 +28,7 @@ export type ValidationParams = {
     readonly payload?: any,
     readonly validator: GenericValidator
     path?: string | void,
-    bulk?: boolean,
+    throwFirst?: boolean,
     [key: string]: any
 }
 

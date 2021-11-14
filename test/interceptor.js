@@ -1,8 +1,6 @@
 'use strict'
 
-const { GenericValidator, object, string, number } = require('../lib')
-const interceptor = require('../lib/interceptor')
-const validate = require('../lib/validate')
+const { GenericValidator, object, string, number, interceptor } = require('../lib')
 
 GenericValidator.expand({
   asWarning() {
@@ -36,11 +34,7 @@ describe('interceptor', () => {
 
   it('prefix functionality', () => {
     return assert.rejects(
-        validate({
-          payload: null,
-          validator: string().required(),
-          prefix: 'OOPS.',
-        }),
+        string().required().assert(undefined, { prefix: 'OOPS.' }),
         /OOPS\. payload is required/,
     )
   })
