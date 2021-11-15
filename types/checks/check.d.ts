@@ -1,6 +1,10 @@
 import {CheckDto, Message, Validate, ValidationParams} from "../interfaces";
 import {ValidationError} from "../errors";
 
+interface CheckValidationParams extends ValidationParams {
+    extra: object
+}
+
 declare class Check {
     constructor(checkDto: CheckDto)
 
@@ -13,7 +17,7 @@ declare class Check {
 
     validate: Validate
 
-    execute(params: ValidationParams): Promise<ValidationError>
+    execute(params: CheckValidationParams): Promise<ValidationError>
 }
 
 export default Check

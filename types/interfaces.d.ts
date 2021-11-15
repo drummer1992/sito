@@ -22,7 +22,7 @@ export type CheckDto = {
     [key: string]: any
 }
 
-export type ValidationParams = {
+export interface ValidationParams {
     readonly key?: string,
     readonly value?: any,
     readonly payload?: any,
@@ -32,7 +32,9 @@ export type ValidationParams = {
     [key: string]: any
 }
 
-export interface InterceptorParams extends ValidationParams {
+export interface OnErrorParams extends ValidationParams {
     extra: { [key: string]: any }
     check: Check
 }
+
+export interface OnBulkErrorParams extends ValidationParams {}

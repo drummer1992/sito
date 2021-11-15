@@ -1,10 +1,10 @@
-import {CheckDto, InterceptorParams, ValidatorCreator} from "./interfaces";
+import {CheckDto, OnBulkErrorParams, OnErrorParams, ValidatorCreator} from "./interfaces";
 import GenericValidator from "./validators/generic";
 import StringValidator from "./validators/string";
 import NumberValidator from "./validators/number";
 import ObjectValidator, {ObjectShape} from "./validators/object";
 import ArrayValidator, {ArrayShape} from "./validators/array";
-import {ValidationError} from "./errors";
+import {BulkValidationError, ValidationError} from "./errors";
 
 export {GenericValidationError, ValidationError, BulkValidationError} from './errors'
 
@@ -49,24 +49,25 @@ declare function array(validator: GenericValidator): ArrayValidator
 
 export function validate(
     validator: GenericValidator | ValidatorCreator,
-    payload?: any,
+    payload: any,
     customOptions?: { [key: string]: any }
 ): Promise<ValidationError[]>
 
 export function assert(
     validator: GenericValidator | ValidatorCreator,
-    payload?: any,
+    payload: any,
     customOptions?: { [key: string]: any }
 ): Promise<void | never>
 
 export function assertBulk(
     validator: GenericValidator | ValidatorCreator,
-    payload?: any,
+    payload: any,
     customOptions?: { [key: string]: any }
 ): Promise<void | never>
 
 export const interceptor: {
-    register(interceptFn: (error: ValidationError, options: InterceptorParams) => any): void
+    onError(fn: (error: ValidationError, params: OnErrorParams) => any): void
+    onBulkError(fn: (error: BulkValidationError, params: OnBulkErrorParams) => any): void
 }
 
 export {object, array}

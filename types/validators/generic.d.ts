@@ -2,16 +2,12 @@ import Checks from "../checks";
 import {ValidationError} from "../errors";
 import {CheckDto, Message} from "../interfaces";
 
-interface ObjectToExpand {
-    [key: string]: (this: GenericValidator) => any
-}
-
 declare class GenericValidator {
     constructor();
 
     checks: Checks
 
-    static expand(obj: ObjectToExpand): void
+    static expand(obj: object): void
 
     validate(payload: any, customOptions?: { [key: string]: any }): Promise<ValidationError[]>
 
