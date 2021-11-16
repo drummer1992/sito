@@ -12,23 +12,27 @@ describe('interceptor', () => {
       },
 
       reference(ref) {
-        this.extra.reference = ref
+        const check = this.checks.last()
+
+        check.reference = ref
 
         return this
       },
     })
 
     interceptor.onError((error, options) => {
-      if (options.prefix) {
-        error.message = `${options.prefix} ${error.message}`
+      const { validator, prefix, check } = options
+
+      if (prefix) {
+        error.message = `${prefix} ${error.message}`
       }
 
-      if (options.extra.asWarning) {
+      if (validator.extra.asWarning) {
         return console.warn(error)
       }
 
-      if (options.extra.reference) {
-        error.reference = options.extra.reference
+      if (check.reference) {
+        error.reference = check.reference
       }
 
       return error
@@ -86,16 +90,11 @@ describe('interceptor', () => {
   })
 
   describe('compose', () => {
-    it('each validator should be independent', async () => {
+    it('should respect top level validator', async () => {
       await compose(
-          string().required().asWarning(),
-          string().required().asWarning(),
-      ).assert()
-
-      await assert.rejects(compose(
-          string().required().asWarning(),
           string().required(),
-      ).assert(), /payload is required/)
+          string().required(),
+      ).asWarning().assert()
     })
 
     it('each validator should have own `extra` object', () => {

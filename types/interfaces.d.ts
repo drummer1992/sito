@@ -29,12 +29,13 @@ export interface ValidationParams {
     readonly validator: GenericValidator
     path?: string | void,
     throwFirst?: boolean,
+
     [key: string]: any
 }
 
 export interface OnErrorParams extends ValidationParams {
-    extra: { [key: string]: any }
     check: Check
 }
 
-export interface OnBulkErrorParams extends ValidationParams {}
+export interface OnBulkErrorParams extends ValidationParams {
+}
