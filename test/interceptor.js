@@ -1,12 +1,18 @@
 'use strict'
 
-const { GenericValidator, object, string, number, interceptor } = require('../lib')
+const { GenericValidator, object, string, number, interceptor, compose } = require('../lib')
 
 describe('interceptor', () => {
   before(() => {
     GenericValidator.expand({
       asWarning() {
-        this.checks.extra.asWarning = true
+        this.extra.asWarning = true
+
+        return this
+      },
+
+      reference(ref) {
+        this.extra.reference = ref
 
         return this
       },
@@ -19,6 +25,10 @@ describe('interceptor', () => {
 
       if (options.extra.asWarning) {
         return console.warn(error)
+      }
+
+      if (options.extra.reference) {
+        error.reference = options.extra.reference
       }
 
       return error
@@ -68,6 +78,42 @@ describe('interceptor', () => {
 
             assert.strictEqual(error.errors.length, 1)
             assert.strictEqual(error.errors[0].message, 'payload should be type of string')
+
+            return true
+          },
+      )
+    })
+  })
+
+  describe('compose', () => {
+    it('each validator should be independent', async () => {
+      await compose(
+          string().required().asWarning(),
+          string().required().asWarning(),
+      ).assert()
+
+      await assert.rejects(compose(
+          string().required().asWarning(),
+          string().required(),
+      ).assert(), /payload is required/)
+    })
+
+    it('each validator should have own `extra` object', () => {
+      const composedSchema = compose(
+          string().required().reference('1'),
+          string().required().reference('2'),
+          string().required().reference('3'),
+      )
+
+      return assert.rejects(
+          composedSchema.assertBulk(),
+          error => {
+            assert(error)
+
+            assert.strictEqual(error.errors.length, 3)
+            assert.strictEqual(error.errors[0].reference, '1')
+            assert.strictEqual(error.errors[1].reference, '2')
+            assert.strictEqual(error.errors[2].reference, '3')
 
             return true
           },
