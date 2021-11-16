@@ -6,7 +6,7 @@ describe('interceptor', () => {
   before(() => {
     GenericValidator.expand({
       asWarning() {
-        this.extra.asWarning = true
+        this.warning = true
 
         return this
       },
@@ -27,7 +27,7 @@ describe('interceptor', () => {
         error.message = `${prefix} ${error.message}`
       }
 
-      if (validator.extra.asWarning) {
+      if (validator.warning) {
         return console.warn(error)
       }
 
@@ -97,7 +97,7 @@ describe('interceptor', () => {
       ).asWarning().assert()
     })
 
-    it('each validator should have own `extra` object', () => {
+    it('reference', () => {
       const composedSchema = compose(
           string().required().reference('1'),
           string().required().reference('2'),
