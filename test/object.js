@@ -27,16 +27,23 @@ describe('object', () => {
   })
 
   describe('extends', () => {
-    const basicSchema = object({ name: string().required() })
+    const basicSchema = object({
+      name: string().max(50).required(),
+    })
     const hobbies = object({ hobbies: array(string().required()).required().notEmpty() })
     const age = { age: number().required() }
 
-    const mergedSchema = basicSchema.extends(hobbies).extends(age).required()
+    const mergedSchema = object({
+      name: string().max(5).required(),
+    })
+        .extends(basicSchema.extends(hobbies).extends(age))
+        .required()
 
     it('smoke', async () => {
       await assert.rejects(mergedSchema.assert(), /payload is required/)
       await assert.rejects(mergedSchema.assert({}), /name is required/)
       await assert.rejects(mergedSchema.assert({ name: 'foo' }), /hobbies is required/)
+      await assert.rejects(mergedSchema.assert({ name: 'foo-bar' }), /name should have less than or equal 5 characters/)
       await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: '' }), /hobbies should be type of array/)
       await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: [] }), /hobbies should be not empty array/)
       await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: ['foo'] }), /age is required/)
