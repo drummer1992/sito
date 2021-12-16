@@ -73,6 +73,7 @@ import {
   number,
   object,
   array,
+  date,
   check,
   combine,
 } from 'sito'
