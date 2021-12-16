@@ -14,6 +14,10 @@ declare class ArrayValidator extends SchemaValidator {
     extends(shape: ArrayShape | ArrayValidator): this
 
     notEmpty(): this
+
+    max(n: number): this
+
+    min(n: number): this
 }
 
 export default ArrayValidator

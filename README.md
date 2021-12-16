@@ -88,6 +88,7 @@ import {
   SchemaValidator,
   ObjectValidator,
   ArrayValidator,
+  DateValidator,
 } from 'sito'
 ```
 
@@ -123,13 +124,20 @@ import {
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
     - [`number.strict(isStrict?: boolean): NumberValidator`](#numberstrictisstrict-boolean-numbervalidator)
   - [ArrayValidator|array](#arrayvalidator)
-    - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictshapeValidator-genericvalidator-arrayvalidator)
+    - [`array.strict(isStrict?: boolean): ArrayValidator`](#arraystrictisstrict-boolean-arrayvalidator)
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
-    - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofshapeValidator-genericvalidator-arrayvalidator)
+    - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofshapevalidator-genericvalidator-arrayvalidator)
+    - [`array.notEmpty(): ArrayValidator`](#arraynotempty-arrayvalidator)
+    - [`array.min(n: number): ArrayValidator`](#arrayminn-number-arrayvalidator)
+    - [`array.max(n: number): ArrayValidator`](#arraymaxn-number-arrayvalidator)
   - [ObjectValidator|object](#objectvalidator)
     - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictisstrict-boolean-objectvalidator)
     - [`object.shape(obj: object): ObjectValidator`](#objectshapeobj-object-objectvalidator)
     - [`object.of(shapeValidator: GenericValidator): ObjectValidator`](#objectofshapevalidator-genericvalidator-objectvalidator)
+  - [DateValidator|date](#datevalidator)
+    - [`date.inFuture(): DateValidator`](#dateinfuture-datevalidator)
+    - [`date.inPast(): DateValidator`](#dateinpast-datevalidator)
+    - [`date.today(): DateValidator`](#datetoday-datevalidator)
 
 #### `ValidationError(message: string, value: any, path: string, key: string)`
 
@@ -578,6 +586,17 @@ const numbersList = [...Array(100), 5].map(() => Math.random())
 await fnSchema.assert(numbersList) // throws error with message => [100] is forbidden attribute
 ```
 
+#### `array.notEmpty(): ArrayValidator`
+
+Force the validator to check that the provided array is not empty.
+
+#### `array.max(n: number): ArrayValidator`
+
+Force the validator to check that the provided array has less than or equal `n` elements`.
+
+#### `array.min(n: number): ArrayValidator`
+
+Force the validator to check that the provided array has more than or equal `n` elements`.
 
 ### ObjectValidator
 
@@ -675,3 +694,23 @@ const musiciansMap = {
 
 await fnSchema.assert(musiciansMap) // throws error with message => voice is not needed
 ```
+
+### DateValidator
+
+Define a date validator.
+
+```js
+date()
+```
+
+#### `date.inFuture(): DateValidator`
+
+Force the validator to check that the provided date is in the future.
+
+#### `date.inPast(): DateValidator`
+
+Force the validator to check that the provided date is in the past.
+
+#### `date.today(): DateValidator`
+
+Force the validator to check that the date is today.

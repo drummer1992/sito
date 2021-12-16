@@ -9,6 +9,23 @@ describe('array', () => {
     return assert.rejects(schema.assert({}), /payload should be type of array/)
   })
 
+  it('length', async () => {
+    await assert.rejects(
+        array().of(string()).max(1).assert([1, 2]),
+        /payload should have less than or equal 1 elements/,
+    )
+
+    await assert.rejects(
+        array().of(string()).min(1).assert([]),
+        /payload should have more than or equal 1 elements/,
+    )
+
+    await array().of(string()).min(1).assert(['1'])
+    await array().of(string()).min(1).assert(['1', '2'])
+    await array().of(string()).max(1).assert(['1'])
+    await array().of(string()).max(1).assert([])
+  })
+
   it('of', async () => {
     const schema = array().of(string().min(2))
 
