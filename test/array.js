@@ -62,7 +62,7 @@ describe('array', () => {
   })
 
   it('not empty', () => {
-    return assert.rejects(array().notEmpty().assert([]), /payload should be not empty array/)
+    return assert.rejects(array().notEmpty().assert([]), /payload should be a non-empty array/)
   })
 
   it('shape', () => {
@@ -95,7 +95,7 @@ describe('array', () => {
 
       await assert.rejects(
           schema.assert([{ foo: { bar: { baz: { n: [] } } } }]),
-          /\[0]\.foo\.bar\.baz\.n should be not empty array/,
+          /\[0]\.foo\.bar\.baz\.n should be a non-empty array/,
       )
 
       await assert.rejects(
@@ -127,7 +127,7 @@ describe('array', () => {
 
       await assert.rejects(
           schema.assert([validItem, { foo: { bar: { baz: { n: [] } } } }]),
-          /\[1]\.foo\.bar\.baz\.n should be not empty array/,
+          /\[1]\.foo\.bar\.baz\.n should be a non-empty array/,
       )
 
       await assert.rejects(

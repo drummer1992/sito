@@ -23,7 +23,7 @@ describe('object', () => {
   })
 
   it('not empty', () => {
-    return assert.rejects(object().notEmpty().assert({}), /payload should be not empty object/)
+    return assert.rejects(object().notEmpty().assert({}), /payload should be a non-empty object/)
   })
 
   describe('extends', () => {
@@ -45,7 +45,7 @@ describe('object', () => {
       await assert.rejects(mergedSchema.assert({ name: 'foo' }), /hobbies is required/)
       await assert.rejects(mergedSchema.assert({ name: 'foo-bar' }), /name should have less than or equal 5 characters/)
       await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: '' }), /hobbies should be type of array/)
-      await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: [] }), /hobbies should be not empty array/)
+      await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: [] }), /hobbies should be a non-empty array/)
       await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: ['foo'] }), /age is required/)
       await assert.rejects(mergedSchema.assert({ name: 'foo', hobbies: ['foo'], age: '5a' }), /age should be a number/)
     })
