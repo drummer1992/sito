@@ -2,6 +2,10 @@
 
 const { object, number, string, exists, array, oneOf, boolean } = require('../lib')
 
+const pause = ms => new Promise(resolve => {
+  setTimeout(resolve, ms)
+})
+
 describe('object', () => {
   it('strict', async () => {
     const schema = object({ foo: string().required() }).required(false).strict()
@@ -118,12 +122,16 @@ describe('object', () => {
       const ALLOWED_MUSICIANS = ['drums', 'bass', 'piano']
 
       const fnSchema = object(
-          (value, key) => object({
-            name: string().required().min(2).max(35),
-            level: number().min(0).max(10),
-          })
-              .forbidden(!ALLOWED_MUSICIANS.includes(key))
-              .message(`${key} is not needed`),
+          async (value, key) => {
+            await pause(100)
+
+            return object({
+              name: string().required().min(2).max(35),
+              level: number().min(0).max(10),
+            })
+                .forbidden(!ALLOWED_MUSICIANS.includes(key))
+                .message(`${key} is not needed`)
+          },
       )
 
       const musiciansMap = {
