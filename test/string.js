@@ -10,8 +10,6 @@ describe('string', () => {
   })
 
   it('pattern', async () => {
-    await string().pattern(/(foo|bar)/)
-
     assert.strictEqual(await string().pattern(/(foo|bar)/).isValid('baz'), false)
 
     const validationSchema = object({
