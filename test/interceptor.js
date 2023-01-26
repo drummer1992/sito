@@ -118,5 +118,14 @@ describe('interceptor', () => {
           },
       )
     })
+
+    it('should ignore nils', () => {
+      const composedSchema = compose(
+          string(),
+          null,
+      )
+
+      return assert.rejects(composedSchema.assert(5), /payload should be type of string/)
+    })
   })
 })
