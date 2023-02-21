@@ -148,4 +148,31 @@ describe('generic', () => {
       return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
     })
   })
+
+  describe('transform', () => {
+    it('smoke', async () => {
+      const helper = {
+        dubai: 'Dubai',
+      }
+
+      const schema = array(
+          object({
+            city: object({
+              name: oneOf(['Dubai', 'Kyiv']).required().transform(v => helper[v] || v),
+            }).required(),
+          }),
+      )
+
+      await assert.rejects(schema.assert([{}]), /\[0].city is required/)
+      await assert.rejects(schema.assert([{ city: { name: 'Mankivka' } }]), /\[0].city.name should be one of/)
+
+      await schema.assert([{ city: { name: 'Dubai' } }])
+
+      const payload = [{ city: { name: 'dubai' } }]
+
+      await schema.assert(payload)
+
+      assert.deepStrictEqual(payload, [{ city: { name: 'Dubai' } }])
+    })
+  })
 })

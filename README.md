@@ -114,6 +114,7 @@ import {
     - [`oneOf(values: any[])`](#oneofvalues-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
     - [`forbidden(enabled?: boolean)`](#forbiddenenabled-boolean)
+    - [`transform(mapper?: Mapper)`](#transformmapper-mapper)
   - [StringValidator|string](#stringvalidator)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
     - [`string.min(limit: number): StringValidator`](#stringminlimit-number-stringvalidator)
@@ -460,6 +461,25 @@ Method takes flag `enabled` so you can disable such check on the fly.
 
 ```js
 await forbidden(false).isValid({}) // => true
+```
+
+### `transform(mapper?: Mapper)`
+
+Define a transformer that will be called before the validation.
+After the transformation the resulted value will be set into payload. 
+
+```js
+const helper = {
+  kyiv: 'Kyiv'
+}
+
+const schema = oneOf(['Mankivka', 'Kyiv']).transform((value, key, payload) => helper[value] || value)
+
+const payload = { city: 'kyiv' }
+
+await schema.assert(payload) // ok
+
+assert.deepStrictEqual(payload, { city: 'Kyiv' }) // ok
 ```
 
 

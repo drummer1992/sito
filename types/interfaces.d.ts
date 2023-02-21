@@ -9,6 +9,10 @@ export interface Validate {
     (value: any, key: string | number | void, shape: object | [] | void): boolean | Promise<boolean>;
 }
 
+interface Mapper {
+    (value: any, key: string | number | void, shape: object | [] | void): Promise<any> | any;
+}
+
 export interface ValidatorCreator {
     (value: any, key: string | number | void, shape: any): GenericValidator
 }
