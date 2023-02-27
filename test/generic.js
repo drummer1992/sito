@@ -158,7 +158,7 @@ describe('generic', () => {
       const schema = array(
           object({
             city: object({
-              name: oneOf(['Dubai', 'Kyiv']).required().transform(v => helper[v] || v),
+              name: () => oneOf(['Dubai', 'Kyiv']).required().transform(v => helper[v] || v),
             }).required(),
           }),
       )
