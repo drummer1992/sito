@@ -11,18 +11,18 @@ describe('array', () => {
 
   it('length', async () => {
     await assert.rejects(
-      array().of(string()).max(1).assert([1, 2]),
-      /payload should have less than or equal 1 elements/,
+        array().of(string()).max(1).assert([1, 2]),
+        /payload should have less than or equal 1 elements/,
     )
 
     await assert.rejects(
-      array().of(string()).min(1).assert([]),
-      /payload should have more than or equal 1 elements/,
+        array().of(string()).min(1).assert([]),
+        /payload should have more than or equal 1 elements/,
     )
 
-    await assert.rejects(
-      array().of(number()).length(3).assert([1, 2]),
-      /payload should have 3 elements/,
+    await  assert.rejects(
+      array().of(string()).length(1).assert(['1', '2']),
+        /payload should have 1 elements/,
     )
 
     await array().of(string()).min(1).assert(['1'])
@@ -41,7 +41,7 @@ describe('array', () => {
     assert.strictEqual(await schema.isValid(['ab', 'a']), false)
 
     const fnSchema = array(
-      (value, idx) => number().forbidden(idx === 100),
+        (value, idx) => number().forbidden(idx === 100),
     )
 
     assert.strictEqual(await fnSchema.isValid([1]), true)
@@ -55,8 +55,8 @@ describe('array', () => {
     const schema = array([string().required()]).strict()
 
     return assert.rejects(
-      schema.assert(['foo', 'bar']),
-      /\[1] is forbidden attribute/,
+        schema.assert(['foo', 'bar']),
+        /\[1] is forbidden attribute/,
     )
   })
 
@@ -80,15 +80,15 @@ describe('array', () => {
 
   describe('nested validation', () => {
     const schema = array(
-      object({
-        foo: object({
-          bar: object({
-            baz: object({
-              n: array(number().required()).notEmpty().required(),
+        object({
+          foo: object({
+            bar: object({
+              baz: object({
+                n: array(number().required()).notEmpty().required(),
+              }).strict().required(),
             }).strict().required(),
           }).strict().required(),
-        }).strict().required(),
-      }).strict(),
+        }).strict(),
     ).strict().required().notEmpty()
 
     it('smoke', async () => {
@@ -101,13 +101,13 @@ describe('array', () => {
       await assert.rejects(schema.assert([{ foo: { bar: { baz: {} } } }]), /\[0]\.foo\.bar\.baz\.n is required/)
 
       await assert.rejects(
-        schema.assert([{ foo: { bar: { baz: { n: [] } } } }]),
-        /\[0]\.foo\.bar\.baz\.n should be a non-empty array/,
+          schema.assert([{ foo: { bar: { baz: { n: [] } } } }]),
+          /\[0]\.foo\.bar\.baz\.n should be a non-empty array/,
       )
 
       await assert.rejects(
-        schema.assert([{ foo: { bar: { baz: { n: [{}] } } } }]),
-        /\[0]\.foo\.bar\.baz\.n\[0] should be a number/,
+          schema.assert([{ foo: { bar: { baz: { n: [{}] } } } }]),
+          /\[0]\.foo\.bar\.baz\.n\[0] should be a number/,
       )
 
       const errors = await schema.validate([{ foo: { bar: { baz: { n: ['asdo'] } } } }])
@@ -123,23 +123,23 @@ describe('array', () => {
       await assert.rejects(schema.assert([validItem, { foo: { bar: {} } }]), /\[1]\.foo\.bar\.baz is required/)
 
       await assert.rejects(
-        schema.assert([validItem, { ...validItem, name: 'foo' }]),
-        /\[1]\.name is forbidden attribute/,
+          schema.assert([validItem, { ...validItem, name: 'foo' }]),
+          /\[1]\.name is forbidden attribute/,
       )
 
       await assert.rejects(
-        schema.assert([validItem, { foo: { bar: { baz: {} } } }]),
-        /\[1]\.foo\.bar\.baz\.n is required/,
+          schema.assert([validItem, { foo: { bar: { baz: {} } } }]),
+          /\[1]\.foo\.bar\.baz\.n is required/,
       )
 
       await assert.rejects(
-        schema.assert([validItem, { foo: { bar: { baz: { n: [] } } } }]),
-        /\[1]\.foo\.bar\.baz\.n should be a non-empty array/,
+          schema.assert([validItem, { foo: { bar: { baz: { n: [] } } } }]),
+          /\[1]\.foo\.bar\.baz\.n should be a non-empty array/,
       )
 
       await assert.rejects(
-        schema.assert([validItem, { foo: { bar: { baz: { n: [{}] } } } }]),
-        /\[1]\.foo\.bar\.baz\.n\[0] should be a number/,
+          schema.assert([validItem, { foo: { bar: { baz: { n: [{}] } } } }]),
+          /\[1]\.foo\.bar\.baz\.n\[0] should be a number/,
       )
 
       await schema.assert([validItem, validItem])
