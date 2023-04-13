@@ -15,6 +15,8 @@ declare class ArrayValidator extends SchemaValidator {
 
     notEmpty(): this
 
+    length(n: number): this
+
     max(n: number): this
 
     min(n: number): this
