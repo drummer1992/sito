@@ -130,8 +130,9 @@ import {
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
     - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofshapevalidator-genericvalidator-arrayvalidator)
     - [`array.notEmpty(): ArrayValidator`](#arraynotempty-arrayvalidator)
-    - [`array.min(n: number): ArrayValidator`](#arrayminn-number-arrayvalidator)
     - [`array.max(n: number): ArrayValidator`](#arraymaxn-number-arrayvalidator)
+    - [`array.min(n: number): ArrayValidator`](#arrayminn-number-arrayvalidator)
+    - [`array.length(n: number): ArrayValidator`](#arraylengthn-number-arrayvalidator)
   - [ObjectValidator|object](#objectvalidator)
     - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictisstrict-boolean-objectvalidator)
     - [`object.shape(obj: object): ObjectValidator`](#objectshapeobj-object-objectvalidator)
@@ -618,6 +619,10 @@ Force the validator to check that the provided array has less than or equal `n` 
 #### `array.min(n: number): ArrayValidator`
 
 Force the validator to check that the provided array has more than or equal `n` elements`.
+
+#### `array.length(n: number): ArrayValidator`
+
+Force the validator to check that the provided array has `n` elements`.
 
 ### ObjectValidator
 
