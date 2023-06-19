@@ -174,5 +174,25 @@ describe('generic', () => {
 
       assert.deepStrictEqual(payload, [{ city: { name: 'Dubai' } }])
     })
+
+    it('should not enrich payload with undefined values', async () => {
+      const payload = {}
+
+      await object({
+        key: string().transform(() => undefined),
+      }).assert(payload)
+
+      assert.deepStrictEqual(payload, {})
+    })
+
+    it('should respect undefined in case payload has own property', async () => {
+      const payload = { key: null }
+
+      await object({
+        key: string().transform(() => undefined),
+      }).assert(payload)
+
+      assert.deepStrictEqual(payload, { key: undefined })
+    })
   })
 })
