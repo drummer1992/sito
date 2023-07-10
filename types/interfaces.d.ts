@@ -19,7 +19,7 @@ export interface ValidatorCreator {
 
 export type CheckDto = {
     message: Message | string
-    validate: Validate
+    validate: Validate | boolean
     common?: boolean
     optional?: boolean
     enabled?: boolean

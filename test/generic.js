@@ -91,7 +91,7 @@ describe('generic', () => {
     })
   })
 
-  it('check', () => {
+  it('check', async () => {
     const secret = 'mankivka'
 
     const schema = object({
@@ -102,8 +102,13 @@ describe('generic', () => {
       }),
     })
 
-    return assert.rejects(schema.assert({ secret: 'popivka' }),
+    await assert.rejects(schema.assert({ secret: 'popivka' }),
         /secret is not valid, path: secret, value: popivka, key: secret/)
+
+    await assert.rejects(
+        check({ validate: false, message: 'not valid' }).assert('foo'),
+        /not valid/,
+    )
   })
 
   it('expand', () => {
