@@ -114,7 +114,7 @@ import {
     - [`oneOf(values: any[])`](#oneofvalues-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
     - [`forbidden(enabled?: boolean)`](#forbiddenenabled-boolean)
-    - [`transform(mapper?: Mapper)`](#transformmapper-mapper)
+    - [`transform(mapper?: Mapper, options?: TransformOptions)`](#transformmapper-mapper-options-transformoptions)
   - [StringValidator|string](#stringvalidator)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
     - [`string.min(limit: number): StringValidator`](#stringminlimit-number-stringvalidator)
@@ -464,7 +464,7 @@ Method takes flag `enabled` so you can disable such check on the fly.
 await forbidden(false).isValid({}) // => true
 ```
 
-### `transform(mapper?: Mapper)`
+### `transform(mapper?: Mapper, options?: TransformOptions)`
 
 Define a transformer that will be called before the validation.
 After the transformation the resulted value will be set into payload. 
@@ -481,6 +481,51 @@ const payload = { city: 'kyiv' }
 await schema.assert(payload) // ok
 
 assert.deepStrictEqual(payload, { city: 'Kyiv' }) // ok
+```
+
+### `normalize()`
+
+Normalize the value before the validation.
+
+```js
+const schema = object({
+  a: boolean(),
+  b: date(),
+  c: number(),
+  d: array(),
+})
+
+const payload = {
+  a: 'true',
+  b: '1689670492966',
+  c: '5',
+  d: 'foo',
+}
+
+await schema.assert(payload, { normalize: true })
+
+/**
+ * The `payload` will be transformed to the following:
+ * {
+  a: true,
+  b: new Date(1689670492966),
+  c: 5,
+  d: ['foo'],
+ *}
+ */
+
+/**
+ * You can do the same by defining the normalization explicitly
+ */
+
+const schema = object({
+  a: boolean().normalize(),
+  b: date().normalize(),
+  c: number().normalize(),
+  d: array().normalize(),
+})
+
+await schema.assert(payload)
 ```
 
 
