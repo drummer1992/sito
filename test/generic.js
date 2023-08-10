@@ -199,5 +199,13 @@ describe('generic', () => {
 
       assert.deepStrictEqual(payload, { key: undefined })
     })
+
+    it('should set default value', async () => {
+      const payload = { a: null, b: 'bar' }
+
+      await object({ a: string().default('foo'), b: string() }).assert(payload)
+
+      assert.deepStrictEqual(payload, { a: 'foo', b: 'bar' })
+    })
   })
 })

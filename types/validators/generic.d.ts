@@ -34,6 +34,8 @@ declare class GenericValidator {
     transform(mapper: Mapper, options?: TransformOptions): this
 
     normalize(): this
+
+    default(value: any): this
 }
 
 export default GenericValidator
