@@ -2,19 +2,19 @@ import GenericValidator from "./validators/generic";
 import Check from "./checks/check";
 
 export interface Message {
-    (path: string, value: any, key: string | void): string | Promise<string>;
+    (path: string, value: any, key: string | void, shape: any, root: any): string | Promise<string>;
 }
 
 export interface Validate {
-    (value: any, key: string | number | void, shape: object | [] | void): boolean | Promise<boolean>;
+    (value: any, key: string | number | void, shape: any, root: any): boolean | Promise<boolean>;
 }
 
 interface Mapper {
-    (value: any, key: string | number | void, shape: object | [] | void): Promise<any> | any;
+    (value: any, key: string | number | void, shape: any, root: any): Promise<any> | any;
 }
 
 export interface ValidatorCreator {
-    (value: any, key: string | number | void, shape: any): GenericValidator
+    (value: any, key: string | number | void, shape: any, root: any): GenericValidator
 }
 
 export type CheckDto = {
