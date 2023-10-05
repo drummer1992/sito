@@ -1,6 +1,6 @@
 {
   "name": "sito",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "This is a simple schema validator built without dependencies",
   "main": "lib/index.js",
   "types": "types/index.d.ts",

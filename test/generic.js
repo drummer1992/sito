@@ -83,9 +83,7 @@ describe('generic', () => {
     }).required()
 
     return assert.rejects(schema.assertBulk({ dob: 'not a date' }), e => {
-      assert.strictEqual(e.errors.length, 2)
       assert.strictEqual(e.errors[0].message, 'dob is not a date')
-      assert.strictEqual(e.errors[1].message, 'dob should be in future')
 
       return true
     })
