@@ -27,16 +27,16 @@ describe('generic', () => {
       name: string(),
       gender: oneOf([FEMALE, MALE]),
       age: (value, key, obj) => number()
-          .min(18)
-          .forbidden(obj.gender === FEMALE)
-          .message('It is not decent to ask a woman about her age 8)'),
+        .min(18)
+        .forbidden(obj.gender === FEMALE)
+        .message('It is not decent to ask a woman about her age 8)'),
     })
 
     await schema.assert({ name: 'Tolya', gender: 'm', age: 41 })
 
     await assert.rejects(
-        schema.assert({ name: 'john', gender: 'f', age: 38 }),
-        /It is not decent to ask a woman about her age 8\)/,
+      schema.assert({ name: 'john', gender: 'f', age: 38 }),
+      /It is not decent to ask a woman about her age 8\)/,
     )
   })
 
@@ -101,11 +101,11 @@ describe('generic', () => {
     })
 
     await assert.rejects(schema.assert({ secret: 'popivka' }),
-        /secret is not valid, path: secret, value: popivka, key: secret/)
+      /secret is not valid, path: secret, value: popivka, key: secret/)
 
     await assert.rejects(
-        check({ validate: false, message: 'not valid' }).assert('foo'),
-        /not valid/,
+      check({ validate: false, message: 'not valid' }).assert('foo'),
+      /not valid/,
     )
   })
 
@@ -127,12 +127,12 @@ describe('generic', () => {
       const database = ['id1', 'id2']
 
       const userIdSchema = string().max(50).required()
-          .combine(
-              check({
-                validate: value => database.includes(value),
-                message: (path, value) => `user not found by id ${value}`,
-              }),
-          )
+        .combine(
+          check({
+            validate: value => database.includes(value),
+            message: (path, value) => `user not found by id ${value}`,
+          }),
+        )
 
       return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
     })
@@ -141,11 +141,11 @@ describe('generic', () => {
       const database = ['id1', 'id2']
 
       const userIdSchema = combine(
-          string().max(50).required(),
-          check({
-            validate: value => database.includes(value),
-            message: (path, value) => `user not found by id ${value}`,
-          }),
+        string().max(50).required(),
+        check({
+          validate: value => database.includes(value),
+          message: (path, value) => `user not found by id ${value}`,
+        }),
       )
 
       return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
@@ -159,11 +159,11 @@ describe('generic', () => {
       }
 
       const schema = array(
-          object({
-            city: object({
-              name: () => oneOf(['Dubai', 'Kyiv']).required().transform(v => helper[v] || v),
-            }).required(),
-          }),
+        object({
+          city: object({
+            name: () => oneOf(['Dubai', 'Kyiv']).required().transform(v => helper[v] || v),
+          }).required(),
+        }),
       )
 
       await assert.rejects(schema.assert([{}]), /\[0].city is required/)
@@ -204,6 +204,87 @@ describe('generic', () => {
       await object({ a: string().default('foo'), b: string() }).assert(payload)
 
       assert.deepStrictEqual(payload, { a: 'foo', b: 'bar' })
+    })
+
+    describe('after validation', () => {
+      let schema
+
+      before(() => {
+        const isString = v => typeof v === 'string'
+
+        const toObject = v => {
+          if (isString(v)) {
+            return { url: v, type: 'other' }
+          }
+
+          return v
+        }
+
+        const docValidator = v => {
+          const urlValidator = string().pattern(/.+\.com\b/).required()
+
+          return typeof v === 'string'
+            ? urlValidator.transform(toObject, { afterValidation: true })
+            : object({
+              url: urlValidator,
+              type: string().required(),
+            }).required().strict()
+        }
+
+        schema = object({ documents: array(docValidator) })
+      })
+
+      it('when documents are objects', async () => {
+        const payload = { documents: [{ url: 'foo.com', type: 'bar' }] }
+
+        await schema.assert(payload)
+
+        assert.deepStrictEqual(payload, { documents: [{ url: 'foo.com', type: 'bar' }] })
+
+        await assert.rejects(
+          schema.assert({ documents: [{ url: 'foo', type: 'bar' }] }),
+          /documents\[0].url does not match the pattern/,
+        )
+      })
+
+      it('when documents are string', async () => {
+        await assert.rejects(
+          schema.assert({ documents: ['foo'] }),
+          /documents\[0] does not match the pattern/,
+        )
+
+        const payload = {
+          documents: ['foo.com'],
+        }
+
+        await schema.assert(payload)
+
+        assert.deepStrictEqual(payload, {
+          documents: [{ url: 'foo.com', type: 'other' }],
+        })
+      })
+    })
+
+    describe('chain mappers', () => {
+      let schema
+
+      before(() => {
+        schema = object({
+          x: number()
+            .transform(x => x + 10, { afterValidation: true })
+            .transform(x => Number(x), { afterValidation: false })
+            .transform(x => x * x, { afterValidation: true })
+            .transform(x => x / 2, { afterValidation: false }),
+        })
+      })
+
+      it('smoke', async () => {
+        const payload = { x: '50' }
+
+        await schema.assert(payload)
+
+        assert.deepStrictEqual(payload, { x: 1225 })
+      })
     })
   })
 })
