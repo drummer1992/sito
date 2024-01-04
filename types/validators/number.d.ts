@@ -5,6 +5,8 @@ declare class NumberValidator extends GenericValidator {
 
     max(length: number): this
 
+    integer(): this
+
     positive(): this
 
     negative(): this

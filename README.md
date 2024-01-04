@@ -122,6 +122,7 @@ import {
   - [NumberValidator|number](#numbervalidator)
     - [`number.min(limit: number): NumberValidator`](#numberminlimit-number-numbervalidator)
     - [`number.max(limit: number): NumberValidator`](#numbermaxlimit-number-numbervalidator)
+    - [`number.integer(): NumberValidator`](#numberinteger-numbervalidator)
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
     - [`number.strict(isStrict?: boolean): NumberValidator`](#numberstrictisstrict-boolean-numbervalidator)
@@ -573,6 +574,10 @@ Set the minimum value allowed.
 #### `number.max(limit: number): NumberValidator`
 
 Set the maximum value allowed.
+
+#### `number.integer(): NumberValidator`
+
+Value must be an integer.
 
 #### `number.positive(): NumberValidator`
 
