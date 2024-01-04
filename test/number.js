@@ -12,5 +12,7 @@ describe('number', () => {
     assert.strictEqual(await number().strict().integer().isValid(11.4), false)
     assert.strictEqual(await number().integer().isValid('11'), true)
     assert.strictEqual(await number().strict().integer().isValid(11), true)
+    assert.strictEqual(await number().negative().integer().isValid(10), false)
+    assert.strictEqual(await number().positive().integer().isValid(10), true)
   })
 })

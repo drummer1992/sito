@@ -508,6 +508,10 @@ Set the minimum value allowed.
 
 Set the maximum value allowed.
 
+#### `number.integer(): NumberValidator`
+
+Value must be an integer.
+
 #### `number.positive(): NumberValidator`
 
 Value must be a positive number.
