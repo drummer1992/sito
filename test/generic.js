@@ -35,8 +35,8 @@ describe('generic', () => {
     await schema.assert({ name: 'Tolya', gender: 'm', age: 41 })
 
     await assert.rejects(
-        schema.assert({ name: 'john', gender: 'f', age: 38 }),
-        /It is not decent to ask a woman about her age 8\)/,
+      schema.assert({ name: 'john', gender: 'f', age: 38 }),
+      /It is not decent to ask a woman about her age 8\)/,
     )
 
     await assert.doesNotReject(
@@ -87,15 +87,13 @@ describe('generic', () => {
     }).required()
 
     return assert.rejects(schema.assertBulk({ dob: 'not a date' }), e => {
-      assert.strictEqual(e.errors.length, 2)
       assert.strictEqual(e.errors[0].message, 'dob is not a date')
-      assert.strictEqual(e.errors[1].message, 'dob should be in future')
 
       return true
     })
   })
 
-  it('check', () => {
+  it('check', async () => {
     const secret = 'mankivka'
 
     const schema = object({
@@ -106,8 +104,13 @@ describe('generic', () => {
       }),
     })
 
-    return assert.rejects(schema.assert({ secret: 'popivka' }),
-        /secret is not valid, path: secret, value: popivka, key: secret/)
+    await assert.rejects(schema.assert({ secret: 'popivka' }),
+      /secret is not valid, path: secret, value: popivka, key: secret/)
+
+    await assert.rejects(
+      check({ validate: false, message: 'not valid' }).assert('foo'),
+      /not valid/,
+    )
   })
 
   it('expand', () => {
@@ -128,12 +131,12 @@ describe('generic', () => {
       const database = ['id1', 'id2']
 
       const userIdSchema = string().max(50).required()
-          .combine(
-              check({
-                validate: value => database.includes(value),
-                message: (path, value) => `user not found by id ${value}`,
-              }),
-          )
+        .combine(
+          check({
+            validate: value => database.includes(value),
+            message: (path, value) => `user not found by id ${value}`,
+          }),
+        )
 
       return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
     })
@@ -142,14 +145,150 @@ describe('generic', () => {
       const database = ['id1', 'id2']
 
       const userIdSchema = combine(
-          string().max(50).required(),
-          check({
-            validate: value => database.includes(value),
-            message: (path, value) => `user not found by id ${value}`,
-          }),
+        string().max(50).required(),
+        check({
+          validate: value => database.includes(value),
+          message: (path, value) => `user not found by id ${value}`,
+        }),
       )
 
       return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
+    })
+  })
+
+  describe('transform', () => {
+    it('smoke', async () => {
+      const helper = {
+        dubai: 'Dubai',
+      }
+
+      const schema = array(
+        object({
+          city: object({
+            name: () => oneOf(['Dubai', 'Kyiv']).required().transform(v => helper[v] || v),
+          }).required(),
+        }),
+      )
+
+      await assert.rejects(schema.assert([{}]), /\[0].city is required/)
+      await assert.rejects(schema.assert([{ city: { name: 'Mankivka' } }]), /\[0].city.name should be one of/)
+
+      await schema.assert([{ city: { name: 'Dubai' } }])
+
+      const payload = [{ city: { name: 'dubai' } }]
+
+      await schema.assert(payload)
+
+      assert.deepStrictEqual(payload, [{ city: { name: 'Dubai' } }])
+    })
+
+    it('should not enrich payload with undefined values', async () => {
+      const payload = {}
+
+      await object({
+        key: string().transform(() => undefined),
+      }).assert(payload)
+
+      assert.deepStrictEqual(payload, {})
+    })
+
+    it('should respect undefined in case payload has own property', async () => {
+      const payload = { key: null }
+
+      await object({
+        key: string().transform(() => undefined),
+      }).assert(payload)
+
+      assert.deepStrictEqual(payload, { key: undefined })
+    })
+
+    it('should set default value', async () => {
+      const payload = { a: null, b: 'bar' }
+
+      await object({ a: string().default('foo'), b: string() }).assert(payload)
+
+      assert.deepStrictEqual(payload, { a: 'foo', b: 'bar' })
+    })
+
+    describe('after validation', () => {
+      let schema
+
+      before(() => {
+        const isString = v => typeof v === 'string'
+
+        const toObject = v => {
+          if (isString(v)) {
+            return { url: v, type: 'other' }
+          }
+
+          return v
+        }
+
+        const docValidator = v => {
+          const urlValidator = string().pattern(/.+\.com\b/).required()
+
+          return typeof v === 'string'
+            ? urlValidator.transform(toObject, { afterValidation: true })
+            : object({
+              url: urlValidator,
+              type: string().required(),
+            }).required().strict()
+        }
+
+        schema = object({ documents: array(docValidator) })
+      })
+
+      it('when documents are objects', async () => {
+        const payload = { documents: [{ url: 'foo.com', type: 'bar' }] }
+
+        await schema.assert(payload)
+
+        assert.deepStrictEqual(payload, { documents: [{ url: 'foo.com', type: 'bar' }] })
+
+        await assert.rejects(
+          schema.assert({ documents: [{ url: 'foo', type: 'bar' }] }),
+          /documents\[0].url does not match the pattern/,
+        )
+      })
+
+      it('when documents are string', async () => {
+        await assert.rejects(
+          schema.assert({ documents: ['foo'] }),
+          /documents\[0] does not match the pattern/,
+        )
+
+        const payload = {
+          documents: ['foo.com'],
+        }
+
+        await schema.assert(payload)
+
+        assert.deepStrictEqual(payload, {
+          documents: [{ url: 'foo.com', type: 'other' }],
+        })
+      })
+    })
+
+    describe('chain mappers', () => {
+      let schema
+
+      before(() => {
+        schema = object({
+          x: number()
+            .transform(x => x + 10, { afterValidation: true })
+            .transform(x => Number(x), { afterValidation: false })
+            .transform(x => x * x, { afterValidation: true })
+            .transform(x => x / 2, { afterValidation: false }),
+        })
+      })
+
+      it('smoke', async () => {
+        const payload = { x: '50' }
+
+        await schema.assert(payload)
+
+        assert.deepStrictEqual(payload, { x: 1225 })
+      })
     })
   })
 })

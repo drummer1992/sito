@@ -1,6 +1,10 @@
 import Checks from "../checks";
 import {ValidationError} from "../errors";
-import {CheckDto, Message} from "../interfaces";
+import {CheckDto, Mapper, Message} from "../interfaces";
+
+interface TransformOptions {
+    optional?: boolean
+}
 
 declare class GenericValidator {
     constructor();
@@ -26,6 +30,12 @@ declare class GenericValidator {
     forbidden(enabled?: boolean): this
 
     message(message: string | Message): this
+
+    transform(mapper: Mapper, options?: TransformOptions): this
+
+    normalize(): this
+
+    default(value: any): this
 }
 
 export default GenericValidator

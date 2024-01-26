@@ -113,7 +113,8 @@ import {
     - [`boolean()`](#boolean)
     - [`oneOf(values: any[])`](#oneofvalues-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
-    - [`forbidden(enabled?: boolean, ignoreEmpty?: boolean)`](#forbiddenenabled-boolean)
+    - [`forbidden(enabled?: boolean), ignoreEmpty?: boolean)`](#forbiddenenabled-boolean)
+    - [`transform(mapper?: Mapper, options?: TransformOptions)`](#transformmapper-mapper-options-transformoptions)
   - [StringValidator|string](#stringvalidator)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
     - [`string.min(limit: number): StringValidator`](#stringminlimit-number-stringvalidator)
@@ -121,6 +122,7 @@ import {
   - [NumberValidator|number](#numbervalidator)
     - [`number.min(limit: number): NumberValidator`](#numberminlimit-number-numbervalidator)
     - [`number.max(limit: number): NumberValidator`](#numbermaxlimit-number-numbervalidator)
+    - [`number.integer(): NumberValidator`](#numberinteger-numbervalidator)
     - [`number.positive(): NumberValidator`](#numberpositive-numbervalidator)
     - [`number.negative(): NumberValidator`](#numbernegative-numbervalidator)
     - [`number.strict(isStrict?: boolean): NumberValidator`](#numberstrictisstrict-boolean-numbervalidator)
@@ -129,8 +131,9 @@ import {
     - [`array.shape(arr: Array): ArrayValidator`](#arrayshapearr-array-arrayvalidator)
     - [`array.of(shapeValidator: GenericValidator): ArrayValidator`](#arrayofshapevalidator-genericvalidator-arrayvalidator)
     - [`array.notEmpty(): ArrayValidator`](#arraynotempty-arrayvalidator)
-    - [`array.min(n: number): ArrayValidator`](#arrayminn-number-arrayvalidator)
     - [`array.max(n: number): ArrayValidator`](#arraymaxn-number-arrayvalidator)
+    - [`array.min(n: number): ArrayValidator`](#arrayminn-number-arrayvalidator)
+    - [`array.length(n: number): ArrayValidator`](#arraylengthn-number-arrayvalidator)
   - [ObjectValidator|object](#objectvalidator)
     - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictisstrict-boolean-objectvalidator)
     - [`object.shape(obj: object): ObjectValidator`](#objectshapeobj-object-objectvalidator)
@@ -463,6 +466,70 @@ Method takes flag `enabled` so you can disable such check on the fly.
 await forbidden(false).isValid({}) // => true
 ```
 
+### `transform(mapper?: Mapper, options?: TransformOptions)`
+
+Define a transformer that will be called before the validation.
+After the transformation the resulted value will be set into payload. 
+
+```js
+const helper = {
+  kyiv: 'Kyiv'
+}
+
+const schema = oneOf(['Mankivka', 'Kyiv']).transform((value, key, payload) => helper[value] || value)
+
+const payload = { city: 'kyiv' }
+
+await schema.assert(payload) // ok
+
+assert.deepStrictEqual(payload, { city: 'Kyiv' }) // ok
+```
+
+### `normalize()`
+
+Normalize the value before the validation.
+
+```js
+const schema = object({
+  a: boolean(),
+  b: date(),
+  c: number(),
+  d: array(),
+})
+
+const payload = {
+  a: 'true',
+  b: '1689670492966',
+  c: '5',
+  d: 'foo',
+}
+
+await schema.assert(payload, { normalize: true })
+
+/**
+ * The `payload` will be transformed to the following:
+ * {
+  a: true,
+  b: new Date(1689670492966),
+  c: 5,
+  d: ['foo'],
+ *}
+ */
+
+/**
+ * You can do the same by defining the normalization explicitly
+ */
+
+const schema = object({
+  a: boolean().normalize(),
+  b: date().normalize(),
+  c: number().normalize(),
+  d: array().normalize(),
+})
+
+await schema.assert(payload)
+```
+
 
 ### StringValidator
 
@@ -508,6 +575,10 @@ Set the minimum value allowed.
 #### `number.max(limit: number): NumberValidator`
 
 Set the maximum value allowed.
+
+#### `number.integer(): NumberValidator`
+
+Value must be an integer.
 
 #### `number.positive(): NumberValidator`
 
@@ -599,6 +670,10 @@ Force the validator to check that the provided array has less than or equal `n` 
 #### `array.min(n: number): ArrayValidator`
 
 Force the validator to check that the provided array has more than or equal `n` elements`.
+
+#### `array.length(n: number): ArrayValidator`
+
+Force the validator to check that the provided array has `n` elements`.
 
 ### ObjectValidator
 
@@ -721,6 +796,6 @@ Force the validator to check that the date is today.
 
 Force the validator to check that the provided date is before the validated one.
 
-#### `date.before(after: Date | Number): DateValidator`
+#### `date.after(date: Date | Number): DateValidator`
 
 Force the validator to check that the provided date is after the validated one.

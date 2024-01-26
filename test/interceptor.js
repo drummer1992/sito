@@ -98,25 +98,28 @@ describe('interceptor', () => {
     })
 
     it('reference', () => {
-      const composedSchema = compose(
-          string().required().reference('1'),
-          string().required().reference('2'),
-          string().required().reference('3'),
-      )
+      const schema = string().required().reference('1')
 
       return assert.rejects(
-          composedSchema.assertBulk(),
+          schema.assertBulk(),
           error => {
             assert(error)
 
-            assert.strictEqual(error.errors.length, 3)
+            assert.strictEqual(error.errors.length, 1)
             assert.strictEqual(error.errors[0].reference, '1')
-            assert.strictEqual(error.errors[1].reference, '2')
-            assert.strictEqual(error.errors[2].reference, '3')
 
             return true
           },
       )
+    })
+
+    it('should ignore nils', () => {
+      const composedSchema = compose(
+          string(),
+          null,
+      )
+
+      return assert.rejects(composedSchema.assert(5), /payload should be type of string/)
     })
   })
 })

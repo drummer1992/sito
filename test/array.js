@@ -20,10 +20,17 @@ describe('array', () => {
         /payload should have more than or equal 1 elements/,
     )
 
+    await  assert.rejects(
+      array().of(string()).length(1).assert(['1', '2']),
+        /payload should have 1 elements/,
+    )
+
     await array().of(string()).min(1).assert(['1'])
     await array().of(string()).min(1).assert(['1', '2'])
     await array().of(string()).max(1).assert(['1'])
     await array().of(string()).max(1).assert([])
+    await array().of(string()).length(1).assert(['1'])
+    await array().of(string()).length(2).assert(['1', '2'])
   })
 
   it('of', async () => {
