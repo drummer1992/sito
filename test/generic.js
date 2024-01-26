@@ -27,16 +27,16 @@ describe('generic', () => {
       name: string(),
       gender: oneOf([FEMALE, MALE]),
       age: (value, key, obj) => number()
-        .min(18)
-        .forbidden(obj.gender === FEMALE, true)
-        .message('It is not decent to ask a woman about her age 8)'),
+          .min(18)
+          .forbidden(obj.gender === FEMALE, true)
+          .message('It is not decent to ask a woman about her age 8)'),
     })
 
     await schema.assert({ name: 'Tolya', gender: 'm', age: 41 })
 
     await assert.rejects(
-      schema.assert({ name: 'john', gender: 'f', age: 38 }),
-      /It is not decent to ask a woman about her age 8\)/,
+        schema.assert({ name: 'john', gender: 'f', age: 38 }),
+        /It is not decent to ask a woman about her age 8\)/,
     )
 
     await assert.doesNotReject(
@@ -107,7 +107,7 @@ describe('generic', () => {
     })
 
     return assert.rejects(schema.assert({ secret: 'popivka' }),
-      /secret is not valid, path: secret, value: popivka, key: secret/)
+        /secret is not valid, path: secret, value: popivka, key: secret/)
   })
 
   it('expand', () => {
@@ -128,12 +128,12 @@ describe('generic', () => {
       const database = ['id1', 'id2']
 
       const userIdSchema = string().max(50).required()
-        .combine(
-          check({
-            validate: value => database.includes(value),
-            message: (path, value) => `user not found by id ${value}`,
-          }),
-        )
+          .combine(
+              check({
+                validate: value => database.includes(value),
+                message: (path, value) => `user not found by id ${value}`,
+              }),
+          )
 
       return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
     })
@@ -142,11 +142,11 @@ describe('generic', () => {
       const database = ['id1', 'id2']
 
       const userIdSchema = combine(
-        string().max(50).required(),
-        check({
-          validate: value => database.includes(value),
-          message: (path, value) => `user not found by id ${value}`,
-        }),
+          string().max(50).required(),
+          check({
+            validate: value => database.includes(value),
+            message: (path, value) => `user not found by id ${value}`,
+          }),
       )
 
       return assert.rejects(userIdSchema.assert('killer228'), /user not found by id killer228/)
