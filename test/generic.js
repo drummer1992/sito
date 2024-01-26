@@ -28,7 +28,7 @@ describe('generic', () => {
       gender: oneOf([FEMALE, MALE]),
       age: (value, key, obj) => number()
           .min(18)
-          .forbidden(obj.gender === FEMALE, true)
+          .forbidden(obj.gender === FEMALE, { ignoreNil: true })
           .message('It is not decent to ask a woman about her age 8)'),
     })
 

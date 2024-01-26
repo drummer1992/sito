@@ -1,4 +1,4 @@
-import {CheckDto, OnBulkErrorParams, OnErrorParams, ValidatorCreator} from "./interfaces";
+import {CheckDto, OnBulkErrorParams, OnErrorParams, ValidatorCreator, ForbiddenOptions} from "./interfaces";
 import GenericValidator from "./validators/generic";
 import StringValidator from "./validators/string";
 import NumberValidator from "./validators/number";
@@ -25,7 +25,7 @@ export function compose(...validators: GenericValidator[]): GenericValidator
 
 export function required(enabled?: boolean): GenericValidator
 
-export function forbidden(enabled?: boolean, ignoreEmpty?: boolean): GenericValidator
+export function forbidden(enabled?: boolean, options?: ForbiddenOptions): GenericValidator
 
 export function exists(enabled?: boolean): GenericValidator
 
