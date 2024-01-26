@@ -25,7 +25,7 @@ export function compose(...validators: GenericValidator[]): GenericValidator
 
 export function required(enabled?: boolean): GenericValidator
 
-export function forbidden(enabled?: boolean): GenericValidator
+export function forbidden(enabled?: boolean, ignoreEmpty?: boolean): GenericValidator
 
 export function exists(enabled?: boolean): GenericValidator
 
