@@ -27,9 +27,9 @@ describe('generic', () => {
       name: string(),
       gender: oneOf([FEMALE, MALE]),
       age: (value, key, obj) => number()
-        .min(18)
-        .forbidden(obj.gender === FEMALE)
-        .message('It is not decent to ask a woman about her age 8)'),
+          .min(18)
+          .forbidden(obj.gender === FEMALE, { ignoreNil: true })
+          .message('It is not decent to ask a woman about her age 8)'),
     })
 
     await schema.assert({ name: 'Tolya', gender: 'm', age: 41 })
@@ -37,6 +37,10 @@ describe('generic', () => {
     await assert.rejects(
       schema.assert({ name: 'john', gender: 'f', age: 38 }),
       /It is not decent to ask a woman about her age 8\)/,
+    )
+
+    await assert.doesNotReject(
+      schema.assert({ name: 'john', gender: 'f', age: null }),
     )
   })
 

@@ -104,7 +104,7 @@ import {
     - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(enabled?: boolean): GenericValidator`](#validatorrequiredenabled-boolean-genericvalidator)
-    - [`validator.forbidden(enabled?: boolean): GenericValidator`](#validatorforbiddenenabled-boolean-genericvalidator)
+    - [`validator.forbidden(enabled?: boolean, options?: ForbiddenOptions): GenericValidator`](#validatorforbiddenenabled-boolean-genericvalidator)
     - [`validator.message(message: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
     - [`validator.combine(...validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
     - [`validator.check({ message: string | function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#validatorcheck-message-string--function-validate-function-optional-boolean-common-boolean--genericvalidator)
@@ -113,7 +113,7 @@ import {
     - [`boolean()`](#boolean)
     - [`oneOf(values: any[])`](#oneofvalues-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
-    - [`forbidden(enabled?: boolean)`](#forbiddenenabled-boolean)
+    - [`forbidden(enabled?: boolean), options?: ForbiddenOptions)`](#forbiddenenabled-boolean)
     - [`transform(mapper?: Mapper, options?: TransformOptions)`](#transformmapper-mapper-options-transformoptions)
   - [StringValidator|string](#stringvalidator)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
@@ -234,9 +234,10 @@ const schema = string().required()
 await schema.assert('sito') // ok
 ```
 
-#### `validator.forbidden(enabled?: boolean): GenericValidator`
+#### `validator.forbidden(enabled?: boolean, options?: ForbiddenOptions): GenericValidator`
 
 Method takes flag `enabled` so you can disable such check on the fly.
+`options` object - takes `ignoreNil` flag, which allows to ignore `null` and `undefined` values.
 
 ```js
 const MALE = 'm'
@@ -790,3 +791,11 @@ Force the validator to check that the provided date is in the past.
 #### `date.today(): DateValidator`
 
 Force the validator to check that the date is today.
+
+#### `date.before(date: Date | Number): DateValidator`
+
+Force the validator to check that the provided date is before the validated one.
+
+#### `date.after(date: Date | Number): DateValidator`
+
+Force the validator to check that the provided date is after the validated one.

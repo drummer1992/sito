@@ -6,6 +6,10 @@ declare class DateValidator extends GenericValidator {
     inPast(): this
 
     today(): this
+
+    before(date: Date | Number): this
+
+    after(date: Date | Number): this
 }
 
 export default DateValidator
