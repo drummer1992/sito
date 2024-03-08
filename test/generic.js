@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, number, string, boolean, oneOf, required, check, combine } = require('../lib')
+const { object, array, number, string, boolean, oneOf, required, check, combine, date } = require('../lib')
 const { GenericValidator, NumberValidator } = require('../lib')
 
 describe('generic', () => {
@@ -204,6 +204,16 @@ describe('generic', () => {
       await object({ a: string().default('foo'), b: string() }).assert(payload)
 
       assert.deepStrictEqual(payload, { a: 'foo', b: 'bar' })
+    })
+
+    it('should resolve default value', async () => {
+      const payload = { a: null, b: 'bar' }
+
+      const now = Date.now()
+
+      await object({ a: date().default(() => now), b: string() }).assert(payload)
+
+      assert.deepStrictEqual(payload, { a: now, b: 'bar' })
     })
 
     describe('after validation', () => {
