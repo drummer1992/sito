@@ -31,6 +31,8 @@ export function exists(enabled?: boolean): GenericValidator
 
 export function oneOf(values: any[]): GenericValidator
 
+export function equals(value: any): GenericValidator
+
 export function string(): StringValidator
 
 export function number(): NumberValidator

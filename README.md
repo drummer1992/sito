@@ -112,6 +112,7 @@ import {
     - [`check({ message: string|function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#check-message-stringfunction-validate-function-optional-boolean-common-boolean--genericvalidator)
     - [`boolean()`](#boolean)
     - [`oneOf(values: any[])`](#oneofvalues-any)
+    - [`equals(value: any)`](#equalsvalue-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
     - [`forbidden(enabled?: boolean), options?: ForbiddenOptions)`](#forbiddenenabled-boolean)
     - [`transform(mapper?: Mapper, options?: TransformOptions)`](#transformmapper-mapper-options-transformoptions)
@@ -429,6 +430,17 @@ Define a oneOf validator.
 
 ```js
 const  validator = oneOf([1, 2])
+
+await validator.isValid(1) // => true
+await validator.isValid(3) // => false
+```
+
+### `equals(value: any)`
+
+Define a equals validator.
+
+```js
+const  validator = equals(1)
 
 await validator.isValid(1) // => true
 await validator.isValid(3) // => false

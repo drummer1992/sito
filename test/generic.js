@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, number, string, boolean, oneOf, required, check, combine, date } = require('../lib')
+const { object, array, number, string, boolean, oneOf, required, check, combine, date, equals } = require('../lib')
 const { GenericValidator, NumberValidator } = require('../lib')
 
 describe('generic', () => {
@@ -11,6 +11,16 @@ describe('generic', () => {
   it('oneOf', async () => {
     assert.strictEqual(await oneOf([1, 2]).isValid(1), true)
     assert.strictEqual(await oneOf([1, 2]).isValid(3), false)
+  })
+
+  it('equals', async () => {
+    assert.strictEqual(await equals(1).isValid(1), true)
+    assert.strictEqual(await equals(1).isValid(2), false)
+
+    return assert.rejects(
+      equals(1).assert(2),
+      /payload expected to be 1 but received 2/,
+    )
   })
 
   it('required', async () => {
@@ -27,9 +37,9 @@ describe('generic', () => {
       name: string(),
       gender: oneOf([FEMALE, MALE]),
       age: (value, key, obj) => number()
-          .min(18)
-          .forbidden(obj.gender === FEMALE, { ignoreNil: true })
-          .message('It is not decent to ask a woman about her age 8)'),
+        .min(18)
+        .forbidden(obj.gender === FEMALE, { ignoreNil: true })
+        .message('It is not decent to ask a woman about her age 8)'),
     })
 
     await schema.assert({ name: 'Tolya', gender: 'm', age: 41 })
