@@ -43,3 +43,13 @@ export interface OnErrorParams extends ValidationParams {
 
 export interface OnBulkErrorParams extends ValidationParams {
 }
+
+export interface TransformOptions {
+    optional?: boolean,
+    beforeValidation?: boolean
+    afterValidation?: boolean
+}
+
+export interface ForbiddenOptions {
+    ignoreNil?: boolean
+}

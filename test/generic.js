@@ -1,6 +1,6 @@
 'use strict'
 
-const { object, array, number, string, boolean, oneOf, required, check, combine } = require('../lib')
+const { object, array, number, string, boolean, oneOf, required, check, combine, date, equals } = require('../lib')
 const { GenericValidator, NumberValidator } = require('../lib')
 
 describe('generic', () => {
@@ -11,6 +11,16 @@ describe('generic', () => {
   it('oneOf', async () => {
     assert.strictEqual(await oneOf([1, 2]).isValid(1), true)
     assert.strictEqual(await oneOf([1, 2]).isValid(3), false)
+  })
+
+  it('equals', async () => {
+    assert.strictEqual(await equals(1).isValid(1), true)
+    assert.strictEqual(await equals(1).isValid(2), false)
+
+    return assert.rejects(
+      equals(1).assert(2),
+      /payload expected to be 1 but received 2/,
+    )
   })
 
   it('required', async () => {
@@ -28,7 +38,7 @@ describe('generic', () => {
       gender: oneOf([FEMALE, MALE]),
       age: (value, key, obj) => number()
         .min(18)
-        .forbidden(obj.gender === FEMALE)
+        .forbidden(obj.gender === FEMALE, { ignoreNil: true })
         .message('It is not decent to ask a woman about her age 8)'),
     })
 
@@ -37,6 +47,10 @@ describe('generic', () => {
     await assert.rejects(
       schema.assert({ name: 'john', gender: 'f', age: 38 }),
       /It is not decent to ask a woman about her age 8\)/,
+    )
+
+    await assert.doesNotReject(
+      schema.assert({ name: 'john', gender: 'f', age: null }),
     )
   })
 
@@ -204,6 +218,16 @@ describe('generic', () => {
       await object({ a: string().default('foo'), b: string() }).assert(payload)
 
       assert.deepStrictEqual(payload, { a: 'foo', b: 'bar' })
+    })
+
+    it('should resolve default value', async () => {
+      const payload = { a: null, b: 'bar' }
+
+      const now = Date.now()
+
+      await object({ a: date().default(() => now), b: string() }).assert(payload)
+
+      assert.deepStrictEqual(payload, { a: now, b: 'bar' })
     })
 
     describe('after validation', () => {

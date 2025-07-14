@@ -104,18 +104,17 @@ import {
     - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(enabled?: boolean): GenericValidator`](#validatorrequiredenabled-boolean-genericvalidator)
-    - [`validator.forbidden(enabled?: boolean): GenericValidator`](#validatorforbiddenenabled-boolean-genericvalidator)
+    - [`validator.forbidden(enabled?: boolean, options?: ForbiddenOptions): GenericValidator`](#validatorforbiddenenabled-boolean-genericvalidator)
     - [`validator.message(message: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
-    - [`validator.description(desc: string): GenericValidator`](#validatordescriptiondesc-string-genericvalidator)
     - [`validator.combine(...validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
     - [`validator.check({ message: string | function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#validatorcheck-message-string--function-validate-function-optional-boolean-common-boolean--genericvalidator)
-    - [`validator.toJsonSchema(options?: object): object`](#validatortojsonschema-options-object)
     - [`combine(...validators: GenericValidator[]): GenericValidator`](#combinevalidators-genericvalidator-genericvalidator)
     - [`check({ message: string|function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#check-message-stringfunction-validate-function-optional-boolean-common-boolean--genericvalidator)
     - [`boolean()`](#boolean)
     - [`oneOf(values: any[])`](#oneofvalues-any)
+    - [`equals(value: any)`](#equalsvalue-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
-    - [`forbidden(enabled?: boolean)`](#forbiddenenabled-boolean)
+    - [`forbidden(enabled?: boolean), options?: ForbiddenOptions)`](#forbiddenenabled-boolean)
     - [`transform(mapper?: Mapper, options?: TransformOptions)`](#transformmapper-mapper-options-transformoptions)
   - [StringValidator|string](#stringvalidator)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
@@ -181,7 +180,7 @@ await schema.assert({}) // throws error with message => foo is required
 const schema = object({ foo: required() }).strict()
 
 await schema.assertBulk({ foo: 'bar', baz: 42 })
-
+ 
 /**
   throws error =>
  {
@@ -196,7 +195,7 @@ await schema.assertBulk({ foo: 'bar', baz: 42 })
  }
 */ 
 ```
-
+ 
 
 ### `validator.validate(payload: any): Promise<ValidationError[]>`
 
@@ -206,7 +205,7 @@ await schema.assertBulk({ foo: 'bar', baz: 42 })
 const schema = object({ foo: required() }).strict()
 
 await schema.validate({ foo: 'bar', baz: 42 })
-
+ 
 /**
  => [{
       name: 'ValidationError',
@@ -236,9 +235,10 @@ const schema = string().required()
 await schema.assert('sito') // ok
 ```
 
-#### `validator.forbidden(enabled?: boolean): GenericValidator`
+#### `validator.forbidden(enabled?: boolean, options?: ForbiddenOptions): GenericValidator`
 
 Method takes flag `enabled` so you can disable such check on the fly.
+`options` object - takes `ignoreNil` flag, which allows to ignore `null` and `undefined` values.
 
 ```js
 const MALE = 'm'
@@ -277,64 +277,6 @@ const schema = object({
 })
 
 await schema.assert({ foo: 5 }) // throws error with message => foo is not valid
-```
-
-#### `validator.description(desc: string): GenericValidator`
-
-Set a description for the validator. This description will be included in the JSON schema output.
-
-```js
-const schema = string().description('A string field')
-
-const jsonSchema = schema.toJsonSchema()
-// => { type: 'string', description: 'A string field' }
-```
-
-#### `validator.toJsonSchema(options?: object): object`
-
-Converts the validator to a JSON Schema object.
-
-```js
-const schema = object({
-  foo: string().required().description('A required string field'),
-  bar: number().description('An optional number field'),
-})
-
-const jsonSchema = schema.toJsonSchema()
-/* => {
-  type: 'object',
-  properties: {
-    foo: { type: 'string', description: 'A required string field' },
-    bar: { type: 'number', description: 'An optional number field' }
-  },
-  required: ['foo']
-} */
-```
-
-You can also provide descriptions through the options:
-
-```js
-const schema = object({
-  foo: string().required(),
-  bar: number(),
-})
-
-const jsonSchema = schema.toJsonSchema({
-  description: 'A test object',
-  descriptions: {
-    foo: 'A required string field',
-    bar: 'An optional number field',
-  }
-})
-/* => {
-  type: 'object',
-  description: 'A test object',
-  properties: {
-    foo: { type: 'string', description: 'A required string field' },
-    bar: { type: 'number', description: 'An optional number field' }
-  },
-  required: ['foo']
-} */
 ```
 
 ### `validator.check({ message: string | function, validate: function, optional?: boolean, common?: boolean }): GenericValidator` 
@@ -488,6 +430,17 @@ Define a oneOf validator.
 
 ```js
 const  validator = oneOf([1, 2])
+
+await validator.isValid(1) // => true
+await validator.isValid(3) // => false
+```
+
+### `equals(value: any)`
+
+Define a equals validator.
+
+```js
+const  validator = equals(1)
 
 await validator.isValid(1) // => true
 await validator.isValid(3) // => false
@@ -850,3 +803,11 @@ Force the validator to check that the provided date is in the past.
 #### `date.today(): DateValidator`
 
 Force the validator to check that the date is today.
+
+#### `date.before(date: Date | Number): DateValidator`
+
+Force the validator to check that the provided date is before the validated one.
+
+#### `date.after(date: Date | Number): DateValidator`
+
+Force the validator to check that the provided date is after the validated one.
