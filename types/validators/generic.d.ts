@@ -32,6 +32,10 @@ declare class GenericValidator {
     normalize(): this
 
     default(value: any): this
+
+    description(value: string): this
+
+    toJsonSchema(): object
 }
 
 export default GenericValidator
