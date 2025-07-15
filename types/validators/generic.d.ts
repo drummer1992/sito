@@ -35,12 +35,7 @@ declare class GenericValidator {
 
     description(value: string): this
 
-    toJsonSchema(options?: { description?: string, [key: string]: any }): {
-        type: string,
-        required?: boolean,
-        description?: string,
-        [key: string]: any
-    }
+    toJsonSchema(): object
 }
 
 export default GenericValidator
