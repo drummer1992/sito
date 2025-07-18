@@ -10,7 +10,7 @@ describe('toJSONSchema', () => {
 
     assert.deepStrictEqual(jsonSchema, {
       type: 'array',
-      required: true,
+      minItems: 1,
       items: { type: 'string' },
     })
   })
@@ -37,7 +37,7 @@ describe('toJSONSchema', () => {
             baz: {
               type: 'object',
               properties: {
-                boz: { type: 'number', required: true },
+                boz: { type: 'number' },
               },
               required: ['boz'],
             },
@@ -66,11 +66,11 @@ describe('toJSONSchema', () => {
     assert.deepStrictEqual(jsonSchema, {
       type: 'object',
       properties: {
-        foo: { type: 'string', required: true },
+        foo: { type: 'string' },
         bar: { type: 'number' },
         baz: {
           type: 'array',
-          required: true,
+          minItems: 1,
           items: { type: 'string' },
         },
         biz: {
@@ -80,7 +80,7 @@ describe('toJSONSchema', () => {
             baz: {
               type: 'object',
               properties: {
-                boz: { type: 'number', required: true },
+                boz: { type: 'number' },
               },
               required: ['boz'],
             },
@@ -107,7 +107,6 @@ describe('toJSONSchema', () => {
       properties: {
         foo: {
           type: 'string',
-          required: true,
           description: 'A string field',
         },
         bar: {
