@@ -310,5 +310,23 @@ describe('generic', () => {
         assert.deepStrictEqual(payload, { x: 1225 })
       })
     })
+
+    describe('strip', () => {
+      let schema
+
+      before(() => {
+        schema = object({
+          x: number().strict().strip(),
+        })
+      })
+
+      it('smoke', async () => {
+        const payload = { x: '50' }
+
+        await schema.assert(payload)
+
+        assert.deepStrictEqual(payload, {})
+      })
+    })
   })
 })

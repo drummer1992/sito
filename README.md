@@ -104,10 +104,10 @@ import {
     - [`validator.validate(payload: any): Promise<ValidationError[]>`](#validatorvalidatepayload-any-promisevalidationerror)
     - [`validator.isValid(payload: any): Promise<Boolean>`](#validatorisvalidpayload-any-promiseboolean)
     - [`validator.required(enabled?: boolean): GenericValidator`](#validatorrequiredenabled-boolean-genericvalidator)
-    - [`validator.forbidden(enabled?: boolean, options?: ForbiddenOptions): GenericValidator`](#validatorforbiddenenabled-boolean-genericvalidator)
+    - [`validator.forbidden(enabled?: boolean, options?: ForbiddenOptions): GenericValidator`](#validatorforbiddenenabled-boolean-options-forbiddenoptions-genericvalidator)
     - [`validator.message(message: string | function): GenericValidator`](#validatormessagemessage-string--function-genericvalidator)
     - [`validator.combine(...validators: GenericValidator[]): GenericValidator`](#validatorcombinevalidators-genericvalidator-genericvalidator)
-    - [`validator.check({ message: string | function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#validatorcheck-message-string--function-validate-function-optional-boolean-common-boolean--genericvalidator)
+    - [`validator.check({ message: string | function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#validatorcheck-message-string--function-validate-function-optional-boolean-common-boolean--genericvalidator-)
     - [`combine(...validators: GenericValidator[]): GenericValidator`](#combinevalidators-genericvalidator-genericvalidator)
     - [`check({ message: string|function, validate: function, optional?: boolean, common?: boolean }): GenericValidator`](#check-message-stringfunction-validate-function-optional-boolean-common-boolean--genericvalidator)
     - [`boolean()`](#boolean)
@@ -115,7 +115,8 @@ import {
     - [`equals(value: any)`](#equalsvalue-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
     - [`forbidden(enabled?: boolean), options?: ForbiddenOptions)`](#forbiddenenabled-boolean)
-    - [`transform(mapper?: Mapper, options?: TransformOptions)`](#transformmapper-mapper-options-transformoptions)
+    - [`transform(mapper?: Mapper|OnErrorMapper, options?: TransformOptions)`](#transformmapper-mapperonerrormapper-options-transformoptions)
+    - [`strip(enabled?: boolean)`](#stripenabled-boolean)
   - [StringValidator|string](#stringvalidator)
     - [`string.length(limit: number): StringValidator`](#stringlengthlimit-number-stringvalidator)
     - [`string.min(limit: number): StringValidator`](#stringminlimit-number-stringvalidator)
@@ -478,10 +479,15 @@ Method takes flag `enabled` so you can disable such check on the fly.
 await forbidden(false).isValid({}) // => true
 ```
 
-### `transform(mapper?: Mapper, options?: TransformOptions)`
+### `transform(mapper?: Mapper|OnErrorMapper, options?: TransformOptions)`
 
 Define a transformer that will be called before the validation.
 After the transformation the resulted value will be set into payload. 
+
+
+### `strip(enabled?: boolean)`
+
+It means that the value will be throwout from the payload if it's not valid.
 
 ```js
 const helper = {

@@ -13,6 +13,10 @@ interface Mapper {
     (value: any, key: string | number | void, shape: any, root: any): Promise<any> | any;
 }
 
+interface OnErrorMapper {
+    (error: Error, value: any, key: string | number | void, shape: any, root: any): Promise<any> | any;
+}
+
 export interface ValidatorCreator {
     (value: any, key: string | number | void, shape: any, root: any): GenericValidator
 }
@@ -46,7 +50,11 @@ export interface OnBulkErrorParams extends ValidationParams {
 
 export interface TransformOptions {
     optional?: boolean,
+    when?: 'beforeValidation' | 'afterValidation' | 'onError'
+
+    /** @deprecated Use `when` instead */
     beforeValidation?: boolean
+    /** @deprecated Use `when` instead */
     afterValidation?: boolean
 }
 
