@@ -140,6 +140,8 @@ import {
     - [`object.strict(isStrict?: boolean): ObjectValidator`](#objectstrictisstrict-boolean-objectvalidator)
     - [`object.shape(obj: object): ObjectValidator`](#objectshapeobj-object-objectvalidator)
     - [`object.of(shapeValidator: GenericValidator): ObjectValidator`](#objectofshapevalidator-genericvalidator-objectvalidator)
+    - [`object.rename(from: string, to: string, options?: RenameOptions): ObjectValidator`](#objectrenamefrom-string-to-string-options-renameoptions-objectvalidator)
+    - [`object.mapping(map: Record<string, string>, options?: MappingOptions): ObjectValidator`](#objectmappingmap-recordstring-string-options-mappingoptions-objectvalidator)
   - [DateValidator|date](#datevalidator)
     - [`date.inFuture(): DateValidator`](#dateinfuture-datevalidator)
     - [`date.inPast(): DateValidator`](#dateinpast-datevalidator)
@@ -788,6 +790,45 @@ const musiciansMap = {
 }
 
 await fnSchema.assert(musiciansMap) // throws error with message => voice is not needed
+```
+
+#### `object.rename(from: string, to: string, options?: RenameOptions): ObjectValidator`
+
+Copy a key to a new name before validation. If `override` is `true`, the original key is deleted. Optionally pass a `when` predicate to apply the rename conditionally.
+
+```js
+const schema = object({
+  name: string().required(),
+}).rename('username', 'name')
+
+const payload = { username: 'john' }
+await schema.assert(payload) // ok
+```
+
+```js
+// Remove the original key after renaming
+const schema = object({
+  name: string().required(),
+}).rename('username', 'name', { override: true })
+
+const payload = { username: 'john' }
+await schema.assert(payload)
+// payload => { name: 'john' }
+```
+
+#### `object.mapping(map: Record<string, string>, options?: MappingOptions): ObjectValidator`
+
+Apply multiple renames at once using a `{ from: to }` map. Accepts the same `override` and `when` options as `rename`.
+
+```js
+const schema = object({
+  firstName: string().required(),
+  age: number().required(),
+}).mapping({ first_name: 'firstName', years: 'age' }, { override: true })
+
+const payload = { first_name: 'John', years: 30 }
+await schema.assert(payload)
+// payload => { firstName: 'John', age: 30 }
 ```
 
 ### DateValidator
