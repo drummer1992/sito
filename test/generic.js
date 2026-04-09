@@ -287,6 +287,28 @@ describe('generic', () => {
           documents: [{ url: 'foo.com', type: 'other' }],
         })
       })
+
+      it('should map payload after validation', async () => {
+        const schema = object({
+          A: number().normalize(),
+          B: number().normalize(),
+        })
+          .mapping({
+            A: 'a',
+            B: 'b',
+          }, {
+            when: 'afterValidation',
+            override: true,
+          })
+
+        await assert.rejects(schema.assert({ A: 'foo', B: 'bar' }), /A should be a number/)
+
+        const data = { A: '1', B: '2' }
+
+        await schema.assert(data)
+
+        assert.deepStrictEqual(data, { a: 1, b: 2 })
+      })
     })
 
     describe('chain mappers', () => {
