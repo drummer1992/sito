@@ -794,7 +794,7 @@ await fnSchema.assert(musiciansMap) // throws error with message => voice is not
 
 #### `object.rename(from: string, to: string, options?: RenameOptions): ObjectValidator`
 
-Copy a key to a new name before validation. If `override` is `true`, the original key is deleted. Optionally pass a `when` predicate to apply the rename conditionally.
+Copy a key to a new name. If `override` is `true`, the original key is deleted. `when` controls the transform stage: `'beforeValidation'` (default), `'afterValidation'`, or `'onError'`.
 
 ```js
 const schema = object({
