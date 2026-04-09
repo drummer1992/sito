@@ -6,15 +6,14 @@ export interface ObjectShape {
     [key: string]: GenericValidator | ValidatorCreator
 }
 
+export type WhenOption = 'beforeValidation' | 'afterValidation' | 'onError'
+
 export interface RenameOptions {
-    when?: (value: any, key: string, payload: any) => boolean
+    when?: WhenOption
     override?: boolean
 }
 
-export interface MappingOptions {
-    when?: (value: any, key: string, payload: any) => boolean
-    override?: boolean
-}
+export interface MappingOptions extends RenameOptions {}
 
 declare class ObjectValidator extends SchemaValidator {
     static create(data: ValidatorCreator | GenericValidator | []): ObjectValidator
