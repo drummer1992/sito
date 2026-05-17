@@ -16,13 +16,25 @@ jobs:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Bump patch version
+      - name: Install deps
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run tests
+        run: npm test
+
+      - name: Bump package version
         if: "!contains(github.event.head_commit.message, 'chore: bump version')"
         run: |
           git config user.email "ci@github.com"
           git config user.name "GitHub Actions"
-          git pull
           npm version patch -m "chore: bump version to %s"
           git push
 
-      - run: npm publish --access public
+      - name: Publish to npm
+        run: npm publish --access public
