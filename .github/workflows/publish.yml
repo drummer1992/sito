@@ -25,5 +25,14 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Bump patch version
+        if: "!contains(github.event.head_commit.message, 'chore: bump version')"
+        run: |
+          git config user.email "ci@github.com"
+          git config user.name "GitHub Actions"
+          npm version patch -m "chore: bump version to %s"
+          git push
+
       - name: Publish to npm
+        if: "!contains(github.event.head_commit.message, 'chore: bump version')"
         run: npm publish --access public --provenance
