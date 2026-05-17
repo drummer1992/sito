@@ -23,4 +23,6 @@ jobs:
           npm version patch -m "chore: bump version to %s"
           git push
 
+      - run: git pull
+
       - run: npm publish --access public
