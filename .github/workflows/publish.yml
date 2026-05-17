@@ -27,5 +27,8 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Publish to npm
-        run: npm publish
+      - name: Debug npm config
+        run: npm config list
+
+#      - name: Publish to npm
+#        run: npm publish
