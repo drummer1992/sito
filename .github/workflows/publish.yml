@@ -7,20 +7,23 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: '22.x'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install deps
         run: npm ci
+
       - name: Run linter
         run: npm run lint
+
       - name: Run tests
         run: npm test
+
       - name: Publish to npm
-        if: "!contains(github.event.head_commit.message, 'chore: bump version')"
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
