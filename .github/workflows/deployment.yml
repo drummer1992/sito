@@ -16,8 +16,6 @@ jobs:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
-
       - name: Bump patch version
         run: |
           git config user.email "ci@github.com"
@@ -25,6 +23,6 @@ jobs:
           npm version patch -m "chore: bump version to %s"
           git push
 
-      - run: npm publish --provenance --access public
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
