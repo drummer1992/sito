@@ -25,9 +25,6 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Run tests
-        run: npm test
-
       - name: Bump package version
         if: "!contains(github.event.head_commit.message, 'chore: bump version')"
         run: |
