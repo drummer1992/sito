@@ -36,4 +36,4 @@ jobs:
           git push
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish
