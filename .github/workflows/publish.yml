@@ -36,6 +36,6 @@ jobs:
           echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN | cut -c1-20
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ""
