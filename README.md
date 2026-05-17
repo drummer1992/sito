@@ -114,7 +114,7 @@ import {
     - [`oneOf(values: any[])`](#oneofvalues-any)
     - [`equals(value: any)`](#equalsvalue-any)
     - [`required(enabled?: boolean)`](#requiredenabled-boolean)
-    - [`forbidden(enabled?: boolean), options?: ForbiddenOptions)`](#forbiddenenabled-boolean)
+    - [`forbidden(enabled?: boolean, options?: ForbiddenOptions)`](#forbiddenenabled-boolean-options-forbiddenoptions)
     - [`transform(mapper?: Mapper|OnErrorMapper, options?: TransformOptions)`](#transformmapper-mapperonerrormapper-options-transformoptions)
     - [`strip(enabled?: boolean)`](#stripenabled-boolean)
   - [StringValidator|string](#stringvalidator)
@@ -465,7 +465,7 @@ Method takes flag `enabled` so you can disable such check on the fly.
 await required(false).isValid(null) // => true
 ```
 
-### `forbidden(enabled?: boolean)`
+### `forbidden(enabled?: boolean, options: ForbiddenOptions)`
 
 Define a forbidden validator.
 
