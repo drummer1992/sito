@@ -30,13 +30,12 @@ jobs:
       - name: Debug npm config
         run: npm config list
 
-      - name: Test publish (dry run)
-        run: npm publish --dry-run
-
-      - name: Check OIDC token
+      - name: Show OIDC identity
         run: |
-          curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-          $ACTIONS_ID_TOKEN_REQUEST_URL
+          echo $ACTIONS_ID_TOKEN_REQUEST_URL
+          echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN | cut -c1-20
 
-#      - name: Publish to npm
-#        run: npm publish
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ""
