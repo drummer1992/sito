@@ -4,7 +4,6 @@ on:
     branches: [ master ]
 jobs:
   release:
-    environment: ""
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -28,15 +27,5 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Debug npm config
-        run: npm config list
-
-      - name: Show OIDC identity
-        run: |
-          echo $ACTIONS_ID_TOKEN_REQUEST_URL
-          echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN | cut -c1-20
-
       - name: Publish to npm
         run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ""
